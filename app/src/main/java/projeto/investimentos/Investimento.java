@@ -8,16 +8,29 @@ public abstract class Investimento {
     protected float dinheiro_total;
     protected float dividendo;
     protected int data[];
+    protected String setor;
     
-    public Investimento(String nome,float preco_atual, float dividendo, int quantidade, float investido,int data[]){
+    public Investimento(String nome,Float dinheiro){
         this.nome = nome;
-        this.preco_atual = preco_atual;
-        this.dividendo = dividendo;
-        this.quantidade = quantidade;
-        this.investido = investido;
-        this.data = data;
-        dinheiro_total = quantidade*preco_atual;
-        
+        this.investido = dinheiro;
+    }
+
+    // criar função que usa api para pegar informaçoes dos investimentos 
+
+    public String getNome(){
+        return nome;
+    }
+    public float getPrecoAtual(){
+        return preco_atual;
+    }
+    public float getDividendo(){
+        return dividendo;
+    }
+    public int getQuantidade(){
+        return quantidade;
+    }
+    public float getInvestido(){
+        return investido;
     }
 
     public void comprar(int dinheiro){

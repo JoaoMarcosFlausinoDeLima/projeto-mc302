@@ -2,8 +2,8 @@ package projeto.investimentos;
 
 public class Açao extends Investimento{
 
-    public Açao(String nome,float preco_atual, float dividendo, int quantidade, float investido,int data[]){
-        super(nome, preco_atual, dividendo, quantidade, investido, data);
+    public Açao(String nome,float dinheiro){
+        super(nome, dinheiro);
         
     }
 
