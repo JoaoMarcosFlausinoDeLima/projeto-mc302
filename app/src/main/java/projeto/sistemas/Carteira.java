@@ -2,10 +2,10 @@ package projeto.sistemas;
 import java.util.ArrayList;
 import java.util.List;
 
-import projeto.investimentos.Investimento;
+import projeto.investimentos.FinancialAsset;
 
 public class Carteira {
-    List<Investimento> investimentos = new ArrayList<>();
+    List<FinancialAsset> investimentos = new ArrayList<>();
 
     public void cadastra(String tipo, String nome, int dinheiro){
         switch(tipo){
@@ -47,8 +47,61 @@ public class Carteira {
         }
         
     }
+    public void resumo(String nome){
+        for(int i = 0; i < investimentos.size(); i ++){
+            if(investimentos.get(i).getNome().equals(nome)){
+                investimentos.get(i).resumo();
+                return;
+            }
+        }
+        
+    }
 
-    public List<Investimento> getInvestimentos() {
+    public void variacao(String nome){
+        for(int i = 0; i < investimentos.size(); i ++){
+            if(investimentos.get(i).getNome().equals(nome)){
+                investimentos.get(i).variacaoMonetaria();
+                return;
+            }
+        }
+        
+    }
+
+    public float vender(String nome, int quantidade){
+        for(int i = 0; i < investimentos.size(); i ++){
+            if(investimentos.get(i).getNome().equals(nome)){
+                return (float) investimentos.get(i).vender(quantidade);
+            }
+        }
+        return 0;
+    }
+    
+    public void atualizarInformacoes(){
+        for(int i = 0; i < investimentos.size(); i ++){
+            investimentos.get(i).atualizarInformacoes();
+        }
+    }
+
+    public float render(int data[]){
+        float total = 0;
+        for(int i = 0; i < investimentos.size(); i ++){
+            total += investimentos.get(i).render(data);
+        }
+        return total;
+    }
+
+     public float getPrecoAtivo(String nome){
+        for(int i = 0; i < investimentos.size(); i ++){
+            System.out.println(investimentos.get(i).getNome());
+            if(investimentos.get(i).getNome().equals(nome)){
+                return (float) investimentos.get(i).getPrecoAtual();
+            }
+        }
+        return 0;   
+
+    }
+
+    public List<FinancialAsset> getInvestimentos() {
         return investimentos;
     }
 }
