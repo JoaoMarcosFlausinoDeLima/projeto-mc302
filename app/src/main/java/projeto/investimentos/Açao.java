@@ -66,6 +66,7 @@ public class Açao extends FinancialAsset{
      */
     public Açao(String nome,float dinheiro){
         super(nome, dinheiro);
+        tipo = 0;
         
     }
 
@@ -189,6 +190,9 @@ public class Açao extends FinancialAsset{
         return max52;
     }
 
+    public Float getDividendoAnual(){
+        return dividendo_anual;
+    }
 
 
     /**
@@ -197,7 +201,7 @@ public class Açao extends FinancialAsset{
      * @param data filtro de data não usado nesta implementação
      * @return valor do dividendo anual total para a posição atual
      */
-    public double render(int data[]){
+    public double render(){
         return this.dividendo_anual*this.quantidade;
         
     }

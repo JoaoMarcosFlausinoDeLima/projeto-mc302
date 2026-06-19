@@ -25,7 +25,7 @@ public class TituloRendaFixa extends FinancialAsset {
     
    
 
-    public double render(int data[]){
+    public double render(){
         this.preco_atual = preco_atual*(1+this.dividendo);
         return 0;
     }

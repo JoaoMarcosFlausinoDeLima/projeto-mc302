@@ -25,12 +25,7 @@ public class FundoDeInvestimento  extends FinancialAsset{
         }
     }
     
-    public double render(int data[]){
-
-        if(this.data[1] == data[1] && this.data[2] == data[2]){
-            double rendimentoBruto = this.dividendo * this.quantidade;
-            return rendimentoBruto;
-        }
+    public double render(){
         return 0;
     }
     public void resumo(){}

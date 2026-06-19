@@ -5,7 +5,7 @@ import java.util.List;
 import projeto.investimentos.FinancialAsset;
 
 public class Carteira {
-    List<FinancialAsset> investimentos = new ArrayList<>();
+    private List<FinancialAsset> investimentos = new ArrayList<>();
 
     public void cadastra(String tipo, String nome, int dinheiro){
         switch(tipo){
@@ -82,10 +82,10 @@ public class Carteira {
         }
     }
 
-    public float render(int data[]){
+    public float render(){
         float total = 0;
         for(int i = 0; i < investimentos.size(); i ++){
-            total += investimentos.get(i).render(data);
+            total += investimentos.get(i).render();
         }
         return total;
     }
@@ -100,6 +100,7 @@ public class Carteira {
         return 0;   
 
     }
+
 
     public List<FinancialAsset> getInvestimentos() {
         return investimentos;

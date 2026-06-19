@@ -9,6 +9,7 @@ public class Criptomoeda extends FinancialAsset {
     public Criptomoeda(String nome, float dinheiro){
         super(nome, dinheiro);
         this.setor = "Criptoativos";
+        tipo = 2;
     }
 
     public void atualizarInformacoes(){
@@ -23,7 +24,7 @@ public class Criptomoeda extends FinancialAsset {
         }
     }
 
-    public double render(int data[]){
+    public double render(){
         return 0;
     }
 

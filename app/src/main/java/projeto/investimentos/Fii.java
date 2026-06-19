@@ -68,6 +68,7 @@ public class Fii extends FinancialAsset{
     public Fii(String nome,float dinheiro){
         super(nome, dinheiro);
         this.setor = "Imobiliário";
+        tipo = 1;
     }
 
     /**
@@ -218,7 +219,7 @@ public class Fii extends FinancialAsset{
      * @param data filtro de data não usado nesta implementação
      * @return valor do dividendo anual total para as cotas detidas
      */
-    public double render(int data[]){
+    public double render(){
         return dividendo_anual * quantidade;
     }
 

@@ -14,6 +14,8 @@ import org.jsoup.select.Elements;
  * vender e calcular a variação monetária.</p>
  */
 public abstract class FinancialAsset {
+
+    protected int tipo;
     /**
      * Nome ou código do ativo financeiro.
      * Exemplo: ticker de ação ou símbolo de FII.
@@ -47,7 +49,7 @@ public abstract class FinancialAsset {
     /**
      * Data usada para cálculos de rendimento ou filtros, no formato [dia, mês, ano].
      */
-    protected int data[] = {0,0,0};
+    //protected int data[] = {0,0,0};
 
     /**
      * Setor econômico ou categoria do ativo.
@@ -65,6 +67,7 @@ public abstract class FinancialAsset {
         this.nome = nome;
         atualizarInformacoes();
         comprar(dinheiro);
+
     }
 
     /**
@@ -120,7 +123,9 @@ public abstract class FinancialAsset {
     public void comprar(float dinheiro){
         quantidade += dinheiro/preco_atual;
         investido += dinheiro;
+        atualizarDinheiroTotal();
     }
+
 
     /**
      * Vende a quantidade informada de unidades do ativo.
@@ -130,7 +135,7 @@ public abstract class FinancialAsset {
      */
     public double vender(float quantidade){
         this.quantidade -= quantidade;
-        this.dinheiro_total -= quantidade*preco_atual;
+        atualizarDinheiroTotal();
         return preco_atual*quantidade;
     }
 
@@ -150,7 +155,7 @@ public abstract class FinancialAsset {
      * @param data array com [dia, mês, ano]
      * @return valor do rendimento no período informado
      */
-    public abstract double render(int data[]);
+    public abstract double render();
 
     /**
      * Atualiza os dados específicos do ativo a partir de uma fonte externa.
@@ -158,4 +163,6 @@ public abstract class FinancialAsset {
     public abstract void atualizarInformacoes();
         
     public abstract void resumo();
+
+    
 }
