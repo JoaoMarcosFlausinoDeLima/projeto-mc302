@@ -3,18 +3,12 @@ package projeto.sistemas;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import projeto.excecoes.InvalidAssetException;
 import projeto.excecoes.PersistenceException;
@@ -23,6 +17,7 @@ import projeto.investimentos.Açao;
 import projeto.investimentos.Criptomoeda;
 import projeto.investimentos.Fii;
 import projeto.investimentos.FinancialAsset;
+import projeto.persistencia.GsonFactory;
 
 /**
  * Núcleo do sistema: armazena e gerencia os ativos financeiros da carteira.
@@ -248,35 +243,9 @@ public class Carteira implements Persistivel {
     // Persistência (interface Persistivel)
     // ---------------------------------------------------------------
 
-    /**
-     * Cria um {@link Gson} configurado com um desserializador que reconstrói a
-     * subclasse correta de {@link FinancialAsset} a partir do campo {@code tipo}.
-     */
-    private static Gson criarGson() {
-        JsonDeserializer<FinancialAsset> deserializer = new JsonDeserializer<FinancialAsset>() {
-            @Override
-            public FinancialAsset deserialize(JsonElement json, Type typeOfT,
-                    JsonDeserializationContext context) {
-                JsonObject jsonObject = json.getAsJsonObject();
-                int tipo = jsonObject.get("tipo").getAsInt();
-                if (tipo == 1) {
-                    return context.deserialize(jsonObject, Fii.class);
-                } else if (tipo == 2) {
-                    return context.deserialize(jsonObject, Criptomoeda.class);
-                } else {
-                    return context.deserialize(jsonObject, Açao.class);
-                }
-            }
-        };
-        return new GsonBuilder()
-                .registerTypeAdapter(FinancialAsset.class, deserializer)
-                .setPrettyPrinting()
-                .create();
-    }
-
     @Override
     public void salvar() throws PersistenceException {
-        Gson gson = criarGson();
+        Gson gson = GsonFactory.criar();
         try (FileWriter writer = new FileWriter(ARQUIVO)) {
             gson.toJson(this, writer);
         } catch (Exception e) {
@@ -286,7 +255,7 @@ public class Carteira implements Persistivel {
 
     @Override
     public void carregar() throws PersistenceException {
-        Gson gson = criarGson();
+        Gson gson = GsonFactory.criar();
         try (Reader reader = new FileReader(ARQUIVO)) {
             Carteira carregada = gson.fromJson(reader, Carteira.class);
             if (carregada != null && carregada.investimentos != null) {
