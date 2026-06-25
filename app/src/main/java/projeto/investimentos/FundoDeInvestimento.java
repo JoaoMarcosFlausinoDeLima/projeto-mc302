@@ -28,5 +28,11 @@ public class FundoDeInvestimento  extends FinancialAsset{
     public double render(){
         return 0;
     }
+
+    @Override
+    public String getTipoNome(){
+        return "Fundo de Investimento";
+    }
+
     public void resumo(){}
 }
