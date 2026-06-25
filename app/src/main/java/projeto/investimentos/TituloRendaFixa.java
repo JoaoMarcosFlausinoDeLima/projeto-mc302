@@ -29,5 +29,11 @@ public class TituloRendaFixa extends FinancialAsset {
         this.preco_atual = preco_atual*(1+this.dividendo);
         return 0;
     }
+
+    @Override
+    public String getTipoNome(){
+        return "Título de Renda Fixa";
+    }
+
     public void resumo(){}
 }

@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 public class Criptomoeda extends FinancialAsset {
     public Criptomoeda(String nome, float dinheiro){
         super(nome, dinheiro);
-        this.setor = "Criptoativos";
         tipo = 2;
     }
 
@@ -28,11 +27,16 @@ public class Criptomoeda extends FinancialAsset {
         return 0;
     }
 
+    @Override
+    public String getTipoNome(){
+        return "Criptomoeda";
+    }
+
     public void resumo(){
         System.out.println("Criptomoeda: " + this.nome);
         System.out.println("Preço atual: R$ " + this.preco_atual);
         System.out.println("Quantidade: " + this.quantidade);
         System.out.println("Valor investido: R$ " + this.investido);
-        System.out.println("Variação monetária: R$ " + variacaoMonetaria());
+        System.out.println("Variação monetária: R$ " + calcularVariaçãoMonetaria());
     }
 }
