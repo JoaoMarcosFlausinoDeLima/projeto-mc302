@@ -1,0 +1,103 @@
+/* Tema escuro do Invest&Multiply (cinza do logo: #333333) */
+
+.root {
+    -fx-background-color: #333333;
+    -fx-font-size: 13px;
+}
+
+.label {
+    -fx-text-fill: #e1e6e9;
+}
+
+/* Botões no azul médio do logo */
+.button {
+    -fx-background-color: #4a7187;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #5b8499;
+}
+
+/* Campos de texto em cinza claro */
+.text-field, .password-field, .choice-box {
+    -fx-background-color: #e1e6e9;
+    -fx-text-fill: #222222;
+    -fx-prompt-text-fill: #777777;
+}
+
+/* Abas */
+.tab-pane .tab-header-background {
+    -fx-background-color: #2a2a2a;
+}
+.tab-pane .tab {
+    -fx-background-color: #2a2a2a;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: #4a7187;
+}
+.tab .tab-label {
+    -fx-text-fill: #e1e6e9;
+}
+
+/* Tabela */
+.table-view {
+    -fx-background-color: #3b3b3b;
+    -fx-control-inner-background: #3b3b3b;
+    -fx-table-cell-border-color: #4d4d4d;
+}
+.table-view .column-header-background,
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #2c4c63;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #e1e6e9;
+    -fx-font-weight: bold;
+}
+.table-row-cell {
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: #e1e6e9;
+}
+.table-row-cell:odd {
+    -fx-background-color: #424242;
+}
+.table-row-cell:selected {
+    -fx-background-color: #4a7187;
+}
+.table-cell {
+    -fx-text-fill: #e1e6e9;
+}
+
+/* Gráficos */
+.chart {
+    -fx-background-color: transparent;
+}
+.chart-plot-background {
+    -fx-background-color: #3b3b3b;
+}
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: #4d4d4d;
+}
+.chart-alternative-row-fill,
+.chart-alternative-column-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+}
+.chart-title {
+    -fx-text-fill: #e1e6e9;
+}
+.axis {
+    -fx-tick-label-fill: #d0d0d0;
+}
+.axis-label {
+    -fx-text-fill: #e1e6e9;
+}
+.chart-legend {
+    -fx-background-color: #2a2a2a;
+}
+.chart-legend-item {
+    -fx-text-fill: #e1e6e9;
+}

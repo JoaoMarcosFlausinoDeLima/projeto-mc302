@@ -8,6 +8,13 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    // JavaFX para a interface gráfica desktop.
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+javafx {
+    version = '21.0.5'
+    modules = ['javafx.controls']
 }
 
 repositories {
@@ -47,8 +54,8 @@ java {
 }
 
 application {
-    // Define the main class for the application.
-    mainClass = 'projeto.App'
+    // Define the main class for the application (interface gráfica JavaFX).
+    mainClass = 'projeto.gui.MainApp'
 }
 
 tasks.named('test') {

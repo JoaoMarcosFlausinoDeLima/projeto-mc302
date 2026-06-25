@@ -5,3 +5,13 @@
 build
 
 .fake
+
+# Compiled class output
+app/bin/
+
+# Dados de usuário gerados em tempo de execução
+data/
+app/data/
+
+# macOS
+.DS_Store
