@@ -1,5 +1,6 @@
 package projeto.investimentos;
 
+import projeto.interfaces.Calculavel;
 import java.util.Calendar;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +14,7 @@ import org.jsoup.select.Elements;
  * valor investido e valor de mercado calculado. Também define operações gerais como comprar,
  * vender e calcular a variação monetária.</p>
  */
-public abstract class FinancialAsset {
+public abstract class FinancialAsset implements Calculavel {
 
     protected int tipo;
     /**
@@ -51,12 +52,6 @@ public abstract class FinancialAsset {
      */
     //protected int data[] = {0,0,0};
 
-    /**
-     * Setor econômico ou categoria do ativo.
-     * Exemplo: "Imobiliário", "Energia" ou "Tecnologia".
-     */
-    protected String setor;
-    
     /**
      * Inicializa um ativo financeiro com nome e valor investido, e busca dados externos.
      *
@@ -107,6 +102,15 @@ public abstract class FinancialAsset {
     }
 
     /**
+     * Retorna o valor de mercado atual do ativo (quantidade x preço atual).
+     *
+     * @return valor atual da posição em reais
+     */
+    public double getValorAtual(){
+        return preco_atual * quantidade;
+    }
+
+    /**
      * Atualiza o valor total do ativo com base na quantidade e no preço atual.
      */
     private void atualizarDinheiroTotal(){
@@ -140,12 +144,38 @@ public abstract class FinancialAsset {
     }
 
     /**
+     * Edita a posição do ativo, redefinindo a quantidade e o valor investido.
+     *
+     * @param novaQuantidade nova quantidade de unidades
+     * @param novoInvestido novo valor investido em reais
+     */
+    public void editar(float novaQuantidade, float novoInvestido){
+        this.quantidade = novaQuantidade;
+        this.investido = novoInvestido;
+        atualizarDinheiroTotal();
+    }
+
+    /**
      * Calcula a variação monetária do ativo, ou seja, o lucro ou prejuízo atual, com relação ao preço.
      *
      * @return valor da variação monetária em reais
      */
-    public double variacaoMonetaria(){
+    @Override
+    public double calcularVariaçãoMonetaria(){
         return (preco_atual*quantidade - investido);
+    }
+
+    /**
+     * Calcula a rentabilidade percentual do ativo em relação ao valor investido.
+     *
+     * @return rentabilidade em porcentagem; 0 se nada foi investido
+     */
+    @Override
+    public double calcularRentabilidade(){
+        if(investido == 0){
+            return 0;
+        }
+        return (calcularVariaçãoMonetaria() / investido) * 100;
     }
 
     /**
@@ -164,5 +194,11 @@ public abstract class FinancialAsset {
         
     public abstract void resumo();
 
-    
+    /**
+     * Retorna o rótulo legível do tipo do ativo (ex.: "Ação", "FII").
+     *
+     * @return nome do tipo do ativo
+     */
+    public abstract String getTipoNome();
+
 }

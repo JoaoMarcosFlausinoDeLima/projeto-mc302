@@ -73,7 +73,7 @@ public class Açao extends FinancialAsset{
     /**
      * Atualiza as informações da ação usando os dados do site Fundamentus.
      *
-     * <p>Busca dados como cotação, setor, empresa, dividend yield, P/L, valor de mercado,
+     * <p>Busca dados como cotação, empresa, dividend yield, P/L, valor de mercado,
      * mínimas e máximas de 52 semanas e número de ações.</p>
      */
     public void atualizarInformacoes(){
@@ -94,9 +94,6 @@ public class Açao extends FinancialAsset{
                     if(label.contains("Cotação")){
                         
                         this.preco_atual = Float.parseFloat(textoDado.replace(".","").replace(",", "."));
-                    }
-                    if(label.contains("Setor")){
-                        this.setor = textoDado;
                     }
                     if(label.contains("Empresa")){
                         this.empresa = textoDado;
@@ -194,6 +191,11 @@ public class Açao extends FinancialAsset{
         return dividendo_anual;
     }
 
+    @Override
+    public String getTipoNome(){
+        return "Ação";
+    }
+
 
     /**
      * Calcula o rendimento anual estimado em reais para a quantidade de ações detida.
@@ -209,7 +211,6 @@ public class Açao extends FinancialAsset{
     public void resumo(){
         System.out.println("Ação: " + this.nome);
         System.out.println("Empresa: " + this.empresa);
-        System.out.println("Setor: " + this.setor);
         System.out.println("Preço atual: R$ " + this.preco_atual);
         System.out.println("Quantidade de cotas: " + this.quantidade);
         System.out.println("Valor investido: R$ " + this.investido);
@@ -218,6 +219,6 @@ public class Açao extends FinancialAsset{
         System.out.println("Mínimo 52 semanas: R$ " + this.min52);
         System.out.println("Máximo 52 semanas: R$ " + this.max52);
         System.out.println("Dividendo anual por ação: R$ " + this.dividendo_anual);
-        System.out.println("Variação monetária: R$ " + variacaoMonetaria());
+        System.out.println("Variação monetária: R$ " + calcularVariaçãoMonetaria());
     }
 }

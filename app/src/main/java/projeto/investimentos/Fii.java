@@ -67,7 +67,6 @@ public class Fii extends FinancialAsset{
      */
     public Fii(String nome,float dinheiro){
         super(nome, dinheiro);
-        this.setor = "Imobiliário";
         tipo = 1;
     }
 
@@ -213,6 +212,11 @@ public class Fii extends FinancialAsset{
         return dividendo_anual;
     }
 
+    @Override
+    public String getTipoNome(){
+        return "FII";
+    }
+
     /**
      * Calcula o rendimento anual estimado para a posição de cotas atual.
      *
@@ -227,7 +231,7 @@ public class Fii extends FinancialAsset{
         System.out.println("FII: " + nomeFundo);
         System.out.println("Quantidade de cotas: " + quantidade);
         System.out.println("Valor investido: R$ " + investido);
-        System.out.println("Variação monetária: R$ " + variacaoMonetaria());
+        System.out.println("Variação monetária: R$ " + calcularVariaçãoMonetaria());
         System.out.println("Segmento: " + segmento);
         System.out.println("Gestão: " + gestao);
         System.out.println("Preço atual: R$" + preco_atual);
