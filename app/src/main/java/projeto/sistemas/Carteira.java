@@ -1,19 +1,61 @@
 package projeto.sistemas;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import projeto.excecoes.InvalidAssetException;
+import projeto.excecoes.PersistenceException;
+import projeto.interfaces.Persistivel;
+import projeto.investimentos.Açao;
+import projeto.investimentos.Criptomoeda;
+import projeto.investimentos.Fii;
 import projeto.investimentos.FinancialAsset;
 
-public class Carteira {
+/**
+ * Núcleo do sistema: armazena e gerencia os ativos financeiros da carteira.
+ *
+ * <p>Implementa {@link Persistivel} para salvar e carregar a carteira em JSON.</p>
+ */
+public class Carteira implements Persistivel {
+
+    private static final String ARQUIVO = "carteira.json";
+
     private List<FinancialAsset> investimentos = new ArrayList<>();
 
-    public void cadastra(String tipo, String nome, int dinheiro){
-        switch(tipo){
+    /**
+     * Cadastra um novo ativo na carteira após validar os dados informados.
+     *
+     * @param tipo tipo do ativo ("Ação", "Fii", "FundoDeInvestimento", "TituloRendaFixa", "Criptomoeda")
+     * @param nome nome ou código do ativo
+     * @param dinheiro valor investido inicialmente
+     * @throws InvalidAssetException se o nome for vazio, o valor não for positivo ou o tipo for desconhecido
+     */
+    public void cadastra(String tipo, String nome, int dinheiro) throws InvalidAssetException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new InvalidAssetException("Nome do ativo não pode ser vazio.");
+        }
+        if (dinheiro <= 0) {
+            throw new InvalidAssetException("Valor investido deve ser maior que zero.");
+        }
+        switch (tipo) {
             case "Ação":
-                investimentos.add(new projeto.investimentos.Açao(nome, dinheiro));
+                investimentos.add(new Açao(nome, dinheiro));
                 break;
             case "Fii":
-                investimentos.add(new projeto.investimentos.Fii(nome, dinheiro));
+                investimentos.add(new Fii(nome, dinheiro));
                 break;
             case "FundoDeInvestimento":
                 investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro));
@@ -22,87 +64,236 @@ public class Carteira {
                 investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro));
                 break;
             case "Criptomoeda":
-                investimentos.add(new projeto.investimentos.Criptomoeda(nome, dinheiro));
+                investimentos.add(new Criptomoeda(nome, dinheiro));
                 break;
+            default:
+                throw new InvalidAssetException("Tipo de ativo inválido: " + tipo);
         }
     }
 
-    public void compra(String nome, int dinheiro){
-        for(int i = 0; i < investimentos.size(); i ++){
-            if(investimentos.get(i).getNome().equals(nome)){
-                investimentos.get(i).comprar(dinheiro);
+    /**
+     * Compra mais unidades de um ativo já cadastrado na carteira.
+     *
+     * @param nome nome do ativo a comprar
+     * @param dinheiro valor a ser investido
+     * @throws InvalidAssetException se o valor não for positivo ou o ativo não estiver cadastrado
+     */
+    public void compra(String nome, int dinheiro) throws InvalidAssetException {
+        if (dinheiro <= 0) {
+            throw new InvalidAssetException("Valor de compra deve ser maior que zero.");
+        }
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                ativo.comprar(dinheiro);
+                return;
             }
         }
-        
-        // criar uma função para descobrir o tipo de investimento so pelo nome;
-        cadastra("temp", nome, dinheiro);
+        throw new InvalidAssetException("Ativo não cadastrado: " + nome);
     }
 
-    public void remove(String nome){
-        for(int i = 0; i < investimentos.size(); i ++){
-            if(investimentos.get(i).getNome().equals(nome)){
+    /**
+     * Edita um ativo já cadastrado, redefinindo quantidade e valor investido.
+     *
+     * @param nome nome do ativo a editar
+     * @param novaQuantidade nova quantidade de unidades
+     * @param novoInvestido novo valor investido
+     * @throws InvalidAssetException se os valores não forem positivos ou o ativo não existir
+     */
+    public void editar(String nome, float novaQuantidade, float novoInvestido) throws InvalidAssetException {
+        if (novaQuantidade <= 0) {
+            throw new InvalidAssetException("Quantidade deve ser maior que zero.");
+        }
+        if (novoInvestido <= 0) {
+            throw new InvalidAssetException("Valor investido deve ser maior que zero.");
+        }
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                ativo.editar(novaQuantidade, novoInvestido);
+                return;
+            }
+        }
+        throw new InvalidAssetException("Ativo não cadastrado: " + nome);
+    }
+
+    public void remove(String nome) {
+        for (int i = 0; i < investimentos.size(); i++) {
+            if (investimentos.get(i).getNome().equals(nome)) {
                 investimentos.remove(i);
                 return;
             }
         }
-        
     }
-    public void resumo(String nome){
-        for(int i = 0; i < investimentos.size(); i ++){
-            if(investimentos.get(i).getNome().equals(nome)){
-                investimentos.get(i).resumo();
+
+    public void resumo(String nome) {
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                ativo.resumo();
                 return;
             }
         }
-        
     }
 
-    public void variacao(String nome){
-        for(int i = 0; i < investimentos.size(); i ++){
-            if(investimentos.get(i).getNome().equals(nome)){
-                investimentos.get(i).variacaoMonetaria();
-                return;
-            }
-        }
-        
-    }
-
-    public float vender(String nome, int quantidade){
-        for(int i = 0; i < investimentos.size(); i ++){
-            if(investimentos.get(i).getNome().equals(nome)){
-                return (float) investimentos.get(i).vender(quantidade);
+    public double variacao(String nome) {
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                return ativo.calcularVariaçãoMonetaria();
             }
         }
         return 0;
     }
-    
-    public void atualizarInformacoes(){
-        for(int i = 0; i < investimentos.size(); i ++){
-            investimentos.get(i).atualizarInformacoes();
+
+    public float vender(String nome, int quantidade) {
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                return (float) ativo.vender(quantidade);
+            }
+        }
+        return 0;
+    }
+
+    public void atualizarInformacoes() {
+        for (FinancialAsset ativo : investimentos) {
+            ativo.atualizarInformacoes();
         }
     }
 
-    public float render(){
+    public float render() {
         float total = 0;
-        for(int i = 0; i < investimentos.size(); i ++){
-            total += investimentos.get(i).render();
+        for (FinancialAsset ativo : investimentos) {
+            total += ativo.render();
         }
         return total;
     }
 
-     public float getPrecoAtivo(String nome){
-        for(int i = 0; i < investimentos.size(); i ++){
-            System.out.println(investimentos.get(i).getNome());
-            if(investimentos.get(i).getNome().equals(nome)){
-                return (float) investimentos.get(i).getPrecoAtual();
+    public float getPrecoAtivo(String nome) {
+        for (FinancialAsset ativo : investimentos) {
+            if (ativo.getNome().equals(nome)) {
+                return (float) ativo.getPrecoAtual();
             }
         }
-        return 0;   
-
+        return 0;
     }
-
 
     public List<FinancialAsset> getInvestimentos() {
         return investimentos;
+    }
+
+    // ---------------------------------------------------------------
+    // Cálculos de desempenho da carteira
+    // ---------------------------------------------------------------
+
+    /**
+     * @return soma do valor investido em todos os ativos da carteira
+     */
+    public double calcularTotalInvestido() {
+        double total = 0;
+        for (FinancialAsset ativo : investimentos) {
+            total += ativo.getInvestido();
+        }
+        return total;
+    }
+
+    /**
+     * @return soma do valor de mercado atual de todos os ativos
+     */
+    public double calcularValorTotal() {
+        double total = 0;
+        for (FinancialAsset ativo : investimentos) {
+            total += ativo.getValorAtual();
+        }
+        return total;
+    }
+
+    /**
+     * @return variação monetária total da carteira (lucro ou prejuízo em reais)
+     */
+    public double calcularVariacaoTotal() {
+        return calcularValorTotal() - calcularTotalInvestido();
+    }
+
+    /**
+     * @return rentabilidade geral da carteira em porcentagem; 0 se nada foi investido
+     */
+    public double calcularRentabilidadeGeral() {
+        double investido = calcularTotalInvestido();
+        if (investido == 0) {
+            return 0;
+        }
+        return (calcularVariacaoTotal() / investido) * 100;
+    }
+
+    /**
+     * Calcula o desempenho geral da carteira (rentabilidade percentual total).
+     *
+     * @return desempenho geral em porcentagem
+     */
+    public double calcularDesempenhoGeral() {
+        return calcularRentabilidadeGeral();
+    }
+
+    /**
+     * Organiza os ativos da carteira agrupados por tipo de ativo.
+     *
+     * @return mapa do nome do tipo para a lista de ativos daquele tipo
+     */
+    public Map<String, List<FinancialAsset>> organizarPorTipo() {
+        Map<String, List<FinancialAsset>> grupos = new LinkedHashMap<>();
+        for (FinancialAsset ativo : investimentos) {
+            grupos.computeIfAbsent(ativo.getTipoNome(), k -> new ArrayList<>()).add(ativo);
+        }
+        return grupos;
+    }
+
+    // ---------------------------------------------------------------
+    // Persistência (interface Persistivel)
+    // ---------------------------------------------------------------
+
+    /**
+     * Cria um {@link Gson} configurado com um desserializador que reconstrói a
+     * subclasse correta de {@link FinancialAsset} a partir do campo {@code tipo}.
+     */
+    private static Gson criarGson() {
+        JsonDeserializer<FinancialAsset> deserializer = new JsonDeserializer<FinancialAsset>() {
+            @Override
+            public FinancialAsset deserialize(JsonElement json, Type typeOfT,
+                    JsonDeserializationContext context) {
+                JsonObject jsonObject = json.getAsJsonObject();
+                int tipo = jsonObject.get("tipo").getAsInt();
+                if (tipo == 1) {
+                    return context.deserialize(jsonObject, Fii.class);
+                } else if (tipo == 2) {
+                    return context.deserialize(jsonObject, Criptomoeda.class);
+                } else {
+                    return context.deserialize(jsonObject, Açao.class);
+                }
+            }
+        };
+        return new GsonBuilder()
+                .registerTypeAdapter(FinancialAsset.class, deserializer)
+                .setPrettyPrinting()
+                .create();
+    }
+
+    @Override
+    public void salvar() throws PersistenceException {
+        Gson gson = criarGson();
+        try (FileWriter writer = new FileWriter(ARQUIVO)) {
+            gson.toJson(this, writer);
+        } catch (Exception e) {
+            throw new PersistenceException("Falha ao salvar carteira: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void carregar() throws PersistenceException {
+        Gson gson = criarGson();
+        try (Reader reader = new FileReader(ARQUIVO)) {
+            Carteira carregada = gson.fromJson(reader, Carteira.class);
+            if (carregada != null && carregada.investimentos != null) {
+                this.investimentos = carregada.investimentos;
+            }
+        } catch (Exception e) {
+            throw new PersistenceException("Falha ao carregar carteira: " + e.getMessage(), e);
+        }
     }
 }
