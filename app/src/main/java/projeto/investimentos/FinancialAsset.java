@@ -1,11 +1,7 @@
 package projeto.investimentos;
 
 import projeto.interfaces.Calculavel;
-import java.util.Calendar;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
 
 /**
  * Classe base para ativos financeiros que guarda informações comuns a todos os investimentos.
@@ -60,6 +56,8 @@ public abstract class FinancialAsset implements Calculavel {
      */
     public FinancialAsset(String nome,Float dinheiro){
         this.nome = nome;
+        this.investido = 0;
+        this.dinheiro_total = 0;
         atualizarInformacoes();
         comprar(dinheiro);
 
@@ -107,7 +105,7 @@ public abstract class FinancialAsset implements Calculavel {
      * @return valor atual da posição em reais
      */
     public double getValorAtual(){
-        return preco_atual * quantidade;
+        return dinheiro_total;
     }
 
     /**
@@ -125,11 +123,32 @@ public abstract class FinancialAsset implements Calculavel {
      * @param dinheiro valor em reais utilizado para a compra
      */
     public void comprar(float dinheiro){
+        if (preco_atual <= 0){
+            System.err.println("Erro: preço atual do ativo não está definido.");
+            quantidade += 0;
+            investido += 0;
+            atualizarDinheiroTotal();
+            return;
+        }
         quantidade += dinheiro/preco_atual;
         investido += dinheiro;
         atualizarDinheiroTotal();
     }
 
+    public void setPrecoAtual(double novoPreco){
+        this.preco_atual = novoPreco;
+        atualizarDinheiroTotal();
+    }
+
+    public void setQuantidade(float novaQuantidade){
+        this.quantidade = novaQuantidade;
+        atualizarDinheiroTotal();
+    }
+
+    public void setInvestido(float novoInvestido){
+        this.investido = novoInvestido;
+        atualizarDinheiroTotal();
+    }
 
     /**
      * Vende a quantidade informada de unidades do ativo.
@@ -162,7 +181,7 @@ public abstract class FinancialAsset implements Calculavel {
      */
     @Override
     public double calcularVariaçãoMonetaria(){
-        return (preco_atual*quantidade - investido);
+        return (dinheiro_total - investido);
     }
 
     /**
