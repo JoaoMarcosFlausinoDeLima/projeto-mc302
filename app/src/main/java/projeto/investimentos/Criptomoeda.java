@@ -3,7 +3,7 @@ package projeto.investimentos;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
 
 public class Criptomoeda extends FinancialAsset {
     public Criptomoeda(String nome, float dinheiro){
@@ -14,9 +14,23 @@ public class Criptomoeda extends FinancialAsset {
     public void atualizarInformacoes(){
         try{
             String link = "https://coinmarketcap.com/currencies/" + this.nome;
-            Document doc = Jsoup.connect(link).get();
+        
+        
+            Document doc = Jsoup.connect(link)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                    .header("Accept-Language", "en-US,en;q=0.9")
+                    .timeout(10000) 
+                    .get();
+                    
             Element preco = doc.selectFirst("span[data-test=text-cdp-price-display]");
-            this.preco_atual = Float.parseFloat(preco.text().replace("$", ""));
+            
+            if (preco != null) {
+              String precoLimpo = preco.text().replace("$", "").replace(",", "").trim();
+                this.preco_atual = Float.parseFloat(precoLimpo);
+            } else {
+                this.preco_atual = 0;
+                System.out.println("Elemento de preço não encontrado no HTML retornado para: " + this.nome);
+            }
             
          } catch (Exception e) {
             System.out.println("Erro ao atualizar informações da cripito: " + e.getMessage());

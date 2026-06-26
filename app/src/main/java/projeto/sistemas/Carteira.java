@@ -17,6 +17,7 @@ import projeto.investimentos.Açao;
 import projeto.investimentos.Criptomoeda;
 import projeto.investimentos.Fii;
 import projeto.investimentos.FinancialAsset;
+import projeto.investimentos.FundoDeInvestimento;
 import projeto.persistencia.GsonFactory;
 
 /**
@@ -52,12 +53,7 @@ public class Carteira implements Persistivel {
             case "Fii":
                 investimentos.add(new Fii(nome, dinheiro));
                 break;
-            case "FundoDeInvestimento":
-                investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro));
-                break;
-            case "TituloRendaFixa":
-                investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro));
-                break;
+            
             case "Criptomoeda":
                 investimentos.add(new Criptomoeda(nome, dinheiro));
                 break;
@@ -66,6 +62,26 @@ public class Carteira implements Persistivel {
         }
     }
 
+    public void cadastra_titulo(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]){
+        investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro, tipo, indice, taxa, data_de_compra,  data_de_vencimento, ultima_atu));
+    }
+
+    public void cadastra_fundo(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas){
+        investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro, taxa_administracao, taxa_performance, tipo, benchmark, cotacao, quantidade_de_cotas));
+    }
+
+
+     /**
+     * atualiza manualmente os novos valores do fundo de investimento
+     *
+     */
+    public void editar_fundo(String nome, float cotacao, int quantidade){
+        for(FinancialAsset ativo: investimentos){
+            if(ativo.getNome().equals(nome) && ativo instanceof FundoDeInvestimento){
+                ((FundoDeInvestimento) ativo).editar(cotacao, (float) quantidade);
+            }
+        }
+    }
     /**
      * Compra mais unidades de um ativo já cadastrado na carteira.
      *
@@ -265,4 +281,12 @@ public class Carteira implements Persistivel {
             throw new PersistenceException("Falha ao carregar carteira: " + e.getMessage(), e);
         }
     }
+
+    public void resumos(){
+        for(projeto.investimentos.FinancialAsset ativo: investimentos){
+            ativo.resumo();
+            System.out.println();
+        }
+    }
+
 }
