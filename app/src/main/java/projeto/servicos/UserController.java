@@ -29,12 +29,31 @@ public class UserController {
      * @throws PersistenceException se já existir um usuário com esse nome ou
      *         se houver falha ao salvar
      */
+
+    
     public Usuario cadastrarUsuario(String nome, String senha) throws PersistenceException {
         if (nome == null || nome.trim().isEmpty()) {
             throw new PersistenceException("Nome de usuário não pode ser vazio.");
         }
         if (repositorio.existeUsuario(nome)) {
             throw new PersistenceException("Já existe um usuário com o nome: " + nome);
+        }
+        Usuario novo = new Usuario(nome, senha);
+        repositorio.salvarUsuario(novo);
+        this.usuarioAtual = novo;
+        return novo;
+    }
+    public Usuario cadastrarUsuario(String nome, String senha,Boolean save) throws PersistenceException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new PersistenceException("Nome de usuário não pode ser vazio.");
+        }
+        if (repositorio.existeUsuario(nome)) {
+            throw new PersistenceException("Já existe um usuário com o nome: " + nome);
+        }
+        if(save == false){
+            Usuario novo = new Usuario(nome, senha);
+            this.usuarioAtual = novo;
+            return novo;
         }
         Usuario novo = new Usuario(nome, senha);
         repositorio.salvarUsuario(novo);

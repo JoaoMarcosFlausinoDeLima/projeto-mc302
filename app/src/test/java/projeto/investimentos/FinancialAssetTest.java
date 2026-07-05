@@ -46,9 +46,9 @@ class FinancialAssetTest {
     void venderReducesQuantityAndReturnsValue() {
         TestAsset asset = new TestAsset("TEST", 100f);
 
-        double recebido = asset.vender(2f);
+        double recebido = asset.vender(2);
 
-        assertEquals(2f, recebido, 0.0001);
+        assertEquals(20f, recebido, 0.0001);
         assertEquals(8f, asset.getQuantidade(), 0.0001);
         assertEquals(80f, asset.getValorAtual(), 0.0001);
     }

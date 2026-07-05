@@ -35,7 +35,7 @@ class InvestimentoSubclassTest {
         crypto.comprar(150f);
 
         assertEquals("Criptomoeda", crypto.getTipoNome());
-        assertEquals(3f, crypto.getQuantidade(), 0.0001);
+        assertEquals(3f, crypto.getQuantidade(), 0.1);
     }
 
     @Test

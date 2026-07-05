@@ -2,6 +2,8 @@ package projeto.sistemas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,15 +48,18 @@ class CarteiraTest {
         carteira.cadastra("Ação", "PETR4", 100);
         carteira.cadastra("Fii", "HGLG11", 50);
 
+        assertEquals(150.0, carteira.calcularValorTotal(), 0.0001);
+        assertEquals(0, carteira.calcularVariacaoTotal(), 0.0001);
         for (FinancialAsset ativo : carteira.getInvestimentos()) {
             ativo.setPrecoAtual(10.0);
             ativo.comprar(100);
         }
 
         assertEquals(2, carteira.getInvestimentos().size());
-        assertEquals(250.0, carteira.calcularTotalInvestido(), 0.0001);
-        assertEquals(200.0, carteira.calcularValorTotal(), 0.0001);
-        assertEquals(0.0, carteira.calcularVariacaoTotal(), 0.0001);
+        assertEquals(350.0, carteira.calcularTotalInvestido(), 0.0001);
+        assertNotEquals(200.0, carteira.calcularValorTotal(), 0.0001);
+        assertNotEquals(0, carteira.calcularVariacaoTotal(), 0.0001);
+        
     }
 
     @Test

@@ -31,8 +31,9 @@ public class Criptomoeda extends FinancialAsset {
                 this.preco_atual = 0;
                 System.out.println("Elemento de preço não encontrado no HTML retornado para: " + this.nome);
             }
-            
+            this.atualizarDinheiroTotal();
          } catch (Exception e) {
+            this.atualizarDinheiroTotal();
             System.out.println("Erro ao atualizar informações da cripito: " + e.getMessage());
         }
     }

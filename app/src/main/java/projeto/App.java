@@ -12,11 +12,11 @@ public class App {
         int data_vencimento[] = {1, 1, 2026};
         int data_de_ultima_atualizacao[] = {1, 1, 2023};
         try{
-            carteira.cadastra("Ação", "PETR4", 1000);
-            carteira.cadastra("Fii", "HGLG11", 1000);
+            //carteira.cadastra("Ação", "PETR4", 1000);
+            //carteira.cadastra("Fii", "HGLG11", 1000);
             carteira.cadastra("Criptomoeda", "bitcoin", 1000);
-            carteira.cadastra_titulo("teste", 1000, "pos", "SELIC", 0, data_compra, data_vencimento, data_de_ultima_atualizacao);
-            carteira.cadastra_fundo("teste2", 1000, 0.01f, 0.02f, "tipo", "benchmark", 10, 100);
+            //carteira.cadastra_titulo("teste", 1000, "pos", "SELIC", 0, data_compra, data_vencimento, data_de_ultima_atualizacao);
+            //carteira.cadastra_fundo("teste2", 1000, 0.01f, 0.02f, "tipo", "benchmark", 10, 100);
 
         } catch (Exception e){
             System.out.println("Erro ao cadastrar ativo: " + e.getMessage());

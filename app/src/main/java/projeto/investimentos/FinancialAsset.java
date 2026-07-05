@@ -111,7 +111,7 @@ public abstract class FinancialAsset implements Calculavel {
     /**
      * Atualiza o valor total do ativo com base na quantidade e no preço atual.
      */
-    private void atualizarDinheiroTotal(){
+    protected void atualizarDinheiroTotal(){
         this.dinheiro_total = quantidade*preco_atual;
     }
 

@@ -20,6 +20,7 @@ public class RelatorioPorTipo extends Report {
 
     @Override
     public String gerar() {
+        carteira.atualizarInformacoes();
         // Agrupa os totais por tipo de ativo, preservando a ordem de aparição.
         Map<String, double[]> grupos = new LinkedHashMap<>();
         for (FinancialAsset ativo : carteira.getInvestimentos()) {
