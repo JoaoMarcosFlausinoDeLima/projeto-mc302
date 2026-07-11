@@ -10,6 +10,7 @@ plugins {
     id 'application'
     // JavaFX para a interface gráfica desktop.
     id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'jacoco'
 }
 
 javafx {
@@ -62,4 +63,13 @@ application {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    finalizedBy(tasks.named('jacocoTestReport'))
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn(tasks.named('test'))
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }

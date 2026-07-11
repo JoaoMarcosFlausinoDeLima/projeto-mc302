@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
+import projeto.excecoes.InvalidAssetException;
+
 public class TituloRendaFixa extends FinancialAsset {
     protected float dividendo;
     private String tipo; // pos fixado/misto, pre fixado
@@ -18,7 +20,7 @@ public class TituloRendaFixa extends FinancialAsset {
     
     
 
-    public TituloRendaFixa(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]){
+    public TituloRendaFixa(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]) throws InvalidAssetException{
         super(nome, dinheiro);
         this.dinheiro_total = dinheiro;
         this.tipo = tipo; // pos ou pre
@@ -33,7 +35,7 @@ public class TituloRendaFixa extends FinancialAsset {
     }
 
     @Override
-    public void comprar(float dinheiro){
+    public void comprar(float dinheiro) throws InvalidAssetException{
         investido += dinheiro;
         dinheiro_total += dinheiro;   
         
@@ -62,8 +64,7 @@ public class TituloRendaFixa extends FinancialAsset {
             
             return Float.parseFloat(valor)/100;
         } catch (Exception e) {
-            System.err.println("Erro ao buscar os dados: " + e.getMessage());
-            return 0;
+            throw new RuntimeException("Erro ao buscar o IPCA no ano %d e mes %d: %s".formatted(ano, mes, e.getMessage()));
         }
         
     }
@@ -95,8 +96,7 @@ public class TituloRendaFixa extends FinancialAsset {
             return Float.parseFloat(valor)/100;
 
         } catch (Exception e) {
-            System.err.println("Erro ao buscar os dados: " + e.getMessage());
-            return 0;
+            throw new RuntimeException("Erro ao buscar o SELIC no ano %d e mes %d: %s".formatted(ano, mes, e.getMessage()));
         }
         
     }

@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import projeto.excecoes.*;
 
 /**
  * Representa um FII (Fundo de Investimento Imobiliário) como um ativo financeiro.
@@ -65,7 +66,7 @@ public class Fii extends FinancialAsset{
      * @param nome código do FII (ticker)
      * @param dinheiro valor investido inicialmente
      */
-    public Fii(String nome,float dinheiro){
+    public Fii(String nome,float dinheiro) throws InvalidAssetException{
         super(nome, dinheiro);
         tipo = 1;
     }
@@ -76,12 +77,16 @@ public class Fii extends FinancialAsset{
      * <p>Busca dados como cotação, segmento, nome do fundo, tipo de gestão,
      * dividend yield, receita, valor de mercado e cotações de 52 semanas.</p>
      */
-    public void atualizarInformacoes(){
+    public void atualizarInformacoes() throws InvalidAssetException{
         try {
             String url = "https://www.fundamentus.com.br/detalhes.php?papel= ".replace(" ", this.nome);
             Document doc = Jsoup.connect(url).get();
             
+
             Elements labels = doc.select("td.label");
+            if(labels.isEmpty()){
+                throw new InvalidAssetException("FII inexistente no site Fundamentus");
+            }
 
             for(Element labelCol : labels){
                 String label = labelCol.text();
@@ -92,6 +97,7 @@ public class Fii extends FinancialAsset{
                     String textoDado = dataCol.text();
                     if(label.contains("Cotação")){
                         this.preco_atual = Float.parseFloat(textoDado.replace(",", "."));
+                        
                     }
                     if(label.contains("Segmento")){
                         this.segmento = textoDado;
@@ -127,7 +133,8 @@ public class Fii extends FinancialAsset{
             }
 
         } catch (Exception e) {
-            System.out.println("Erro ao atualizar informações da ação: " + e.getMessage());
+            throw new InvalidAssetException("FII inesistente no site fundamentos");
+       
         }
     }
 

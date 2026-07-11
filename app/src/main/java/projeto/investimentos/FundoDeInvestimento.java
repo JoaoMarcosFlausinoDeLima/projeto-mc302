@@ -1,5 +1,7 @@
 package projeto.investimentos;
 
+import projeto.excecoes.*;
+
 
 public class FundoDeInvestimento  extends FinancialAsset{
     
@@ -7,10 +9,12 @@ public class FundoDeInvestimento  extends FinancialAsset{
     private String benchmark; //# O índice de referência que o gestor tenta bater
     private float taxa_administracao; //# Percentual cobrado pelo gestor do fundo
     private float taxa_performance; //# Percentual cobrado sobre o que exceder o benchmark
-
-    public FundoDeInvestimento(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas){
+  
+    private float pre;
+    
+    public FundoDeInvestimento(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas) throws InvalidAssetException{
+        this.pre = cotacao;
         super(nome, dinheiro);
-        this.preco_atual = cotacao;
         this.quantidade = quantidade_de_cotas;
         this.benchmark = benchmark;
         this.tipo_fundo = tipo;
@@ -19,12 +23,16 @@ public class FundoDeInvestimento  extends FinancialAsset{
         this.taxa_performance = taxa_performance;
     }
 
-    
+
+
     public void atualizarInformacoes(){
-        
+        this.preco_atual = pre;
     }
 
     public void editar_fundo(Float novaCotacao, Float novaQuantidade){
+        if(novaCotacao <= 0 || novaQuantidade < 0){
+            throw new IllegalArgumentException("Cotação e quantidade não podem ser negativas.");
+        }
         this.preco_atual = novaCotacao;
         this.quantidade = novaQuantidade;
         this.dinheiro_total = novaCotacao*novaQuantidade;

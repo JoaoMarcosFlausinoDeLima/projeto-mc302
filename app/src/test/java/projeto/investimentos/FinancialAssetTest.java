@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import projeto.excecoes.InvalidAssetException;
+
 class FinancialAssetTest {
 
     private static final class TestAsset extends FinancialAsset {
 
-        TestAsset(String nome, float dinheiro) {
+        TestAsset(String nome, float dinheiro)  throws InvalidAssetException{
             super(nome, dinheiro);
         }
 
@@ -34,7 +36,7 @@ class FinancialAssetTest {
     }
 
     @Test
-    void comprarIncreasesQuantityAndInvested() {
+    void comprarIncreasesQuantityAndInvested() throws InvalidAssetException {
         TestAsset asset = new TestAsset("TEST", 100f);
 
         assertEquals(10f, asset.getQuantidade(), 0.0001);
@@ -43,7 +45,7 @@ class FinancialAssetTest {
     }
 
     @Test
-    void venderReducesQuantityAndReturnsValue() {
+    void venderReducesQuantityAndReturnsValue() throws InvalidAssetException {
         TestAsset asset = new TestAsset("TEST", 100f);
 
         double recebido = asset.vender(2);
@@ -54,7 +56,7 @@ class FinancialAssetTest {
     }
 
     @Test
-    void editarRedefinesQuantityAndInvestedBaseValues() {
+    void editarRedefinesQuantityAndInvestedBaseValues()  throws InvalidAssetException {
         TestAsset asset = new TestAsset("TEST", 100f);
 
         asset.editar(5f, 50f);
@@ -65,7 +67,7 @@ class FinancialAssetTest {
     }
 
     @Test
-    void calcularRentabilidadeReturnsZeroWhenNoGain() {
+    void calcularRentabilidadeReturnsZeroWhenNoGain()  throws InvalidAssetException{
         TestAsset asset = new TestAsset("TEST", 100f);
 
         assertEquals(0.0, asset.calcularVariaçãoMonetaria(), 0.0001);

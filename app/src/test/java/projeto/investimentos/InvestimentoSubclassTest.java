@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import projeto.excecoes.InvalidAssetException;
+
 class InvestimentoSubclassTest {
 
     @Test
-    void acaoShouldReturnCorrectTipoNomeAndRender() {
+    void acaoShouldReturnCorrectTipoNomeAndRender()  throws InvalidAssetException{
         Açao acao = new Açao("PETR4", 100f);
         acao.preco_atual = 10.0;
         acao.comprar(100f);
@@ -18,7 +20,7 @@ class InvestimentoSubclassTest {
     }
 
     @Test
-    void fiiShouldReturnCorrectTipoNomeAndRender() {
+    void fiiShouldReturnCorrectTipoNomeAndRender()  throws InvalidAssetException {
         Fii fii = new Fii("HGLG11", 200f);
         fii.setPrecoAtual(4.0);
         fii.setQuantidade(5f);
@@ -29,7 +31,7 @@ class InvestimentoSubclassTest {
     }
 
     @Test
-    void criptomoedaShouldReturnCorrectTipoName() {
+    void criptomoedaShouldReturnCorrectTipoName()  throws InvalidAssetException {
         Criptomoeda crypto = new Criptomoeda("bitcoin", 150f);
         crypto.setPrecoAtual(50.0);
         crypto.comprar(150f);
@@ -39,7 +41,7 @@ class InvestimentoSubclassTest {
     }
 
     @Test
-    void tituloRendaFixaShouldAllowCompraAndProvideTipoName() {
+    void tituloRendaFixaShouldAllowCompraAndProvideTipoName()  throws InvalidAssetException {
         int[] dataCompra = {1, 1, 2025};
         int[] dataVencimento = {1, 1, 2027};
         int[] ultimaAtualizacao = {1, 1, 2025};

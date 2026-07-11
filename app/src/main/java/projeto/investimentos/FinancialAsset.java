@@ -1,6 +1,8 @@
 package projeto.investimentos;
 
+import projeto.excecoes.InvalidAssetException;
 import projeto.interfaces.Calculavel;
+import projeto.excecoes.InvalidAssetException;;
 
 
 /**
@@ -54,11 +56,12 @@ public abstract class FinancialAsset implements Calculavel {
      * @param nome nome ou código do ativo
      * @param dinheiro valor investido inicialmente no ativo
      */
-    public FinancialAsset(String nome,Float dinheiro){
+    public FinancialAsset(String nome,Float dinheiro) throws InvalidAssetException{
         this.nome = nome;
         this.investido = 0;
         this.dinheiro_total = 0;
         atualizarInformacoes();
+        
         comprar(dinheiro);
 
     }
@@ -122,30 +125,40 @@ public abstract class FinancialAsset implements Calculavel {
      *
      * @param dinheiro valor em reais utilizado para a compra
      */
-    public void comprar(float dinheiro){
-        if (preco_atual <= 0){
-            System.err.println("Erro: preço atual do ativo não está definido.");
-            quantidade += 0;
-            investido += 0;
-            atualizarDinheiroTotal();
-            return;
+    public void comprar(float dinheiro) throws InvalidAssetException{
+        if (preco_atual <= 0.0){
+            
+            throw new InvalidAssetException("Preço do ativo menor doque 0: %f".formatted(preco_atual));
+  
+     
         }
         quantidade += dinheiro/preco_atual;
         investido += dinheiro;
         atualizarDinheiroTotal();
+
     }
 
-    public void setPrecoAtual(double novoPreco){
+    public void setPrecoAtual(double novoPreco) throws InvalidAssetException {
+        if(novoPreco <= 0){
+            throw new InvalidAssetException("Preço do ativo não pode ser menor ou igual a zero.");
+        }
+
         this.preco_atual = novoPreco;
         atualizarDinheiroTotal();
     }
 
-    public void setQuantidade(float novaQuantidade){
+    public void setQuantidade(float novaQuantidade) throws InvalidAssetException {
+        if(novaQuantidade < 0){
+            throw new InvalidAssetException("Quantidade do ativo não pode ser negativa.");
+        }
         this.quantidade = novaQuantidade;
         atualizarDinheiroTotal();
     }
 
-    public void setInvestido(float novoInvestido){
+    public void setInvestido(float novoInvestido) throws InvalidAssetException {
+        if(novoInvestido < 0){
+           throw new InvalidAssetException("Valor investido não pode ser negativo.");
+        }
         this.investido = novoInvestido;
         atualizarDinheiroTotal();
     }
@@ -156,7 +169,10 @@ public abstract class FinancialAsset implements Calculavel {
      * @param quantidade quantidade de unidades a vender
      * @return valor recebido pela venda
      */
-    public double vender(float quantidade){
+    public double vender(float quantidade) throws InvalidAssetException {
+        if(quantidade > this.quantidade){
+            throw new InvalidAssetException("Quantidade a vender maior do que a quantidade disponível.");
+        }
         this.quantidade -= quantidade;
         atualizarDinheiroTotal();
         return preco_atual*quantidade;
@@ -168,7 +184,10 @@ public abstract class FinancialAsset implements Calculavel {
      * @param novaQuantidade nova quantidade de unidades
      * @param novoInvestido novo valor investido em reais
      */
-    public void editar(float novaQuantidade, float novoInvestido){
+    public void editar(float novaQuantidade, float novoInvestido) throws InvalidAssetException {
+        if(novaQuantidade < 0 || novoInvestido < 0){
+            throw new InvalidAssetException("Quantidade e valor investido não podem ser negativos.");
+        }
         this.quantidade = novaQuantidade;
         this.investido = novoInvestido;
         atualizarDinheiroTotal();
@@ -209,7 +228,7 @@ public abstract class FinancialAsset implements Calculavel {
     /**
      * Atualiza os dados específicos do ativo a partir de uma fonte externa.
      */
-    public abstract void atualizarInformacoes();
+    public abstract void atualizarInformacoes() throws InvalidAssetException;
         
     public abstract void resumo();
 

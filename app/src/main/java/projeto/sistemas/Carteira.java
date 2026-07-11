@@ -62,11 +62,11 @@ public class Carteira implements Persistivel {
         }
     }
 
-    public void cadastra_titulo(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]){
+    public void cadastra_titulo(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]) throws InvalidAssetException{
         investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro, tipo, indice, taxa, data_de_compra,  data_de_vencimento, ultima_atu));
     }
 
-    public void cadastra_fundo(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas){
+    public void cadastra_fundo(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas) throws InvalidAssetException{
         investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro, taxa_administracao, taxa_performance, tipo, benchmark, cotacao, quantidade_de_cotas));
     }
 
@@ -75,7 +75,7 @@ public class Carteira implements Persistivel {
      * atualiza manualmente os novos valores do fundo de investimento
      *
      */
-    public void editar_fundo(String nome, float cotacao, int quantidade){
+    public void editar_fundo(String nome, float cotacao, int quantidade) throws InvalidAssetException {
         for(FinancialAsset ativo: investimentos){
             if(ativo.getNome().equals(nome) && ativo instanceof FundoDeInvestimento){
                 ((FundoDeInvestimento) ativo).editar(cotacao, (float) quantidade);
@@ -153,7 +153,7 @@ public class Carteira implements Persistivel {
         return 0;
     }
 
-    public float vender(String nome, int quantidade) {
+    public float vender(String nome, int quantidade) throws InvalidAssetException {
         for (FinancialAsset ativo : investimentos) {
             if (ativo.getNome().equals(nome)) {
                 return (float) ativo.vender(quantidade);
@@ -162,7 +162,7 @@ public class Carteira implements Persistivel {
         return 0;
     }
 
-    public void atualizarInformacoes() {
+    public void atualizarInformacoes() throws InvalidAssetException {
         for (FinancialAsset ativo : investimentos) {
             ativo.atualizarInformacoes();
         }

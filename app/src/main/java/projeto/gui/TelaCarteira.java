@@ -112,7 +112,7 @@ public class TelaCarteira {
     // Aba de ativos
     // ------------------------------------------------------------------
 
-    private Tab criarAbaAtivos() {
+    private Tab criarAbaAtivos(){
         Button cadastrar = new Button("Cadastrar");
         Button editar = new Button("Editar");
         Button remover = new Button("Remover");
@@ -127,9 +127,14 @@ public class TelaCarteira {
         editar.setOnAction(e -> abrirDialogoEdicao());
         remover.setOnAction(e -> removerSelecionado());
         atualizarPrecos.setOnAction(e -> {
-            carteira.atualizarInformacoes();
-            atualizar();
+            try {
+                carteira.atualizarInformacoes();
+                atualizar();
+            } catch (InvalidAssetException ex) {
+                System.out.println("Erro ao atualizar informações: " + ex.getMessage());
+            }
         });
+        
         relGeral.setOnAction(e ->
                 mostrarTexto("Relatório geral", reportService.gerarRelatorioGeral(carteira).gerar()));
         relTipo.setOnAction(e ->

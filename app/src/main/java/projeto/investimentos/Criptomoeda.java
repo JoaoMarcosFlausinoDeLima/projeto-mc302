@@ -3,15 +3,16 @@ package projeto.investimentos;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import projeto.excecoes.*;
 
 
 public class Criptomoeda extends FinancialAsset {
-    public Criptomoeda(String nome, float dinheiro){
+    public Criptomoeda(String nome, float dinheiro) throws InvalidAssetException{
         super(nome, dinheiro);
         tipo = 2;
     }
 
-    public void atualizarInformacoes(){
+    public void atualizarInformacoes() throws InvalidAssetException{
         try{
             String link = "https://coinmarketcap.com/currencies/" + this.nome;
         
@@ -32,9 +33,8 @@ public class Criptomoeda extends FinancialAsset {
                 System.out.println("Elemento de preço não encontrado no HTML retornado para: " + this.nome);
             }
             this.atualizarDinheiroTotal();
-         } catch (Exception e) {
-            this.atualizarDinheiroTotal();
-            System.out.println("Erro ao atualizar informações da cripito: " + e.getMessage());
+        } catch (Exception e) {
+            throw new InvalidAssetException("Cripito invesistente no site coinmarketcap");
         }
     }
 

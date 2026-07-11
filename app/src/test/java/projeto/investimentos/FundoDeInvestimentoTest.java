@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import projeto.excecoes.InvalidAssetException;
+
 class FundoDeInvestimentoTest {
 
     @Test
-    void constructorSetsTypeAndValorAtual() {
+    void constructorSetsTypeAndValorAtual()  throws InvalidAssetException{
         FundoDeInvestimento fundo = new FundoDeInvestimento("Multimercado", 200f,
                 0.01f, 0.02f, "Multimercado", "IBOV", 15f, 5);
 
@@ -16,9 +18,9 @@ class FundoDeInvestimentoTest {
     }
 
     @Test
-    void editarFundoUpdatesCotacaoAndQuantidade() {
+    void editarFundoUpdatesCotacaoAndQuantidade()  throws InvalidAssetException{
         FundoDeInvestimento fundo = new FundoDeInvestimento("Multimercado", 200f,
-                0.01f, 0.02f, "Multimercado", "IBOV", 15f, 5);
+                0.01f, 0.02f, "Multimercado", "IBOV", 15, 5);
 
         fundo.editar_fundo(20f, 10f);
 
