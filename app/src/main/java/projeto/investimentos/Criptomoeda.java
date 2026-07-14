@@ -5,7 +5,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import projeto.excecoes.*;
 
-
+/**
+ * Representa uma criptomoeda como um ativo financeiro na carteira.
+ *
+ * <p>Atualiza o preço através de scraping da página da moeda no CoinMarketCap
+ * e calcula a variação de valor com base na cotação atual.</p>
+ */
 public class Criptomoeda extends FinancialAsset {
     public Criptomoeda(String nome, float dinheiro) throws InvalidAssetException{
         super(nome, dinheiro);

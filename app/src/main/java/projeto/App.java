@@ -4,6 +4,12 @@ import projeto.servicos.ReportService;
 import projeto.sistemas.Carteira;
 import projeto.excecoes.InvalidAssetException;
 
+/**
+ * Demonstração de uso da aplicação de carteira de investimentos.
+ *
+ * <p>Este ponto de entrada cria uma carteira, cadastra um ativo e gera
+ * relatórios de desempenho no console.</p>
+ */
 public class App {
 
     public static void main(String[] args) {

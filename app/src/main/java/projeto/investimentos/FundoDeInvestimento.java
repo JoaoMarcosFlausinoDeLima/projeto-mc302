@@ -2,7 +2,12 @@ package projeto.investimentos;
 
 import projeto.excecoes.*;
 
-
+/**
+ * Representa um fundo de investimento como um ativo gerenciado pelo usuário.
+ *
+ * <p>Contém informações de tipo, benchmark, taxas e cotação para cálculo de
+ * valor de mercado e possíveis edições manuais.</p>
+ */
 public class FundoDeInvestimento  extends FinancialAsset{
     
     private String tipo_fundo; //# Opções: "Renda Fixa", "Acoes", "Multimercado", "Cambial"

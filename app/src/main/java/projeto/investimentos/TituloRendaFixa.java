@@ -9,6 +9,12 @@ import java.time.format.DateTimeFormatter;
 
 import projeto.excecoes.InvalidAssetException;
 
+/**
+ * Representa um título de renda fixa custodiado pelo usuário.
+ *
+ * <p>Gerencia dados de taxa, índice, datas de compra e vencimento, e consulta
+ * valores de IPCA/SELIC para atualização do valor atual.</p>
+ */
 public class TituloRendaFixa extends FinancialAsset {
     protected float dividendo;
     private String tipo; // pos fixado/misto, pre fixado
