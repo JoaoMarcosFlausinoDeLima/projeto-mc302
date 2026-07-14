@@ -119,18 +119,6 @@ Usando Gradle no diretório raiz:
 ./gradlew run
 ```
 
-Se o projeto estiver configurado com JavaFX, execute `MainApp` como classe principal.
-
-## Padrões de documentação presentes
-
-- O código já contém comentários JavaDoc em vários pacotes, especialmente em `interfaces`, `excecoes`, `servicos`, `relatorios` e `sistemas`.
-- Esta documentação central complementa os comentários inline e descreve a arquitetura completa.
-
-## Observações importantes
-
-- A aplicação mistura lógica de domínio e UI em várias classes; melhorias futuras podem separar melhor responsabilidades.
-- A persistência de usuários e carteira é feita usando arquivos locais; para produção, uma migração para banco de dados ou serviço de armazenamento seria recomendada.
-- O tratamento de erros de rede e scraping pode ser ampliado para lidar com tempo limite, erros HTTP e páginas não encontradas.
 
 ## Arquivos de dados
 

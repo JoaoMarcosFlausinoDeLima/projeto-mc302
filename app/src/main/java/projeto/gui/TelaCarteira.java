@@ -119,7 +119,7 @@ public class TelaCarteira {
         Button atualizarPrecos = new Button("Atualizar preços");
         Button relGeral = new Button("Relatório geral");
         Button relTipo = new Button("Relatório por tipo");
-        Button recomendacoes = new Button("Recomendações");
+        Button recomendacoes = new Button("Alertas");
         Button salvar = new Button("Salvar");
         Button sair = new Button("Sair");
 
@@ -139,7 +139,7 @@ public class TelaCarteira {
                 mostrarTexto("Relatório geral", reportService.gerarRelatorioGeral(carteira).gerar()));
         relTipo.setOnAction(e ->
                 mostrarTexto("Relatório por tipo", reportService.gerarRelatorioPorTipo(carteira).gerar()));
-        recomendacoes.setOnAction(e -> mostrarTexto("Recomendações", gerarRecomendacoes()));
+        recomendacoes.setOnAction(e -> mostrarTexto("Alertas", gerarRecomendacoes()));
         salvar.setOnAction(e -> salvar());
         sair.setOnAction(e -> app.mostrarLogin());
 
@@ -241,8 +241,11 @@ public class TelaCarteira {
 
         ChoiceBox<String> tipo = new ChoiceBox<>(FXCollections.observableArrayList(
                 "Ação", "Fii", "Criptomoeda", "FundoDeInvestimento", "TituloRendaFixa"));
-        tipo.getSelectionModel().selectFirst();
+                tipo.getSelectionModel().selectFirst();
+        
+        
         TextField nome = new TextField();
+        
         nome.setPromptText("Código (ex.: PETR4)");
         TextField valor = new TextField();
         valor.setPromptText("Valor investido");
@@ -254,7 +257,7 @@ public class TelaCarteira {
         grade.addRow(0, new Label("Tipo:"), tipo);
         grade.addRow(1, new Label("Nome:"), nome);
         grade.addRow(2, new Label("Valor:"), valor);
-
+        
         dialogo.getDialogPane().setContent(grade);
         dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -340,14 +343,14 @@ public class TelaCarteira {
             return "Nenhum ativo cadastrado.";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("(Alertas demonstrativos, sem caráter de recomendação financeira)\n\n");
+        sb.append("(Alertas demonstrativos)\n\n");
         for (FinancialAsset ativo : carteira.getInvestimentos()) {
             double variacao = ativo.calcularVariaçãoMonetaria();
             String situacao;
             if (variacao > 0) {
-                situacao = "em alta";
+                situacao = "subindo";
             } else if (variacao < 0) {
-                situacao = "em baixa";
+                situacao = "caindo";
             } else {
                 situacao = "estável";
             }
