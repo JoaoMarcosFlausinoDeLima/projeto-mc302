@@ -15,6 +15,10 @@ O **Invest&Multiply** é um gerenciador de carteira de investimentos pessoal des
 
 > ADICIONAR ALGUMAS CAPTURAS DE TELAS
 
+<p align="center">
+  <img src="assets/login.png" alt="Tela de Login do Invest&Multiply" width="500">
+</p>
+
 ---
 
 ## ✨ Funcionalidades Principais
@@ -32,6 +36,7 @@ O **Invest&Multiply** é um gerenciador de carteira de investimentos pessoal des
 
 ## 🛠️ Arquitetura Principal
 
+```text
 invest-multiply/
 ├── app/
 │   ├── data/                   # JSONs de dados dos usuários (gerados em execução)
@@ -47,7 +52,7 @@ invest-multiply/
 │   │   ├── interfaces/         # Contratos do sistema (Persistivel, Calculavel)
 │   │   └── excecoes/           # Exceções personalizadas do domínio financeiro
 │   └── build.gradle            # Script de construção do Gradle
-
+```
 
 ## Pacotes e responsabilidades
 
