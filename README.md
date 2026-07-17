@@ -3,7 +3,7 @@
 ![Java](https://img.shields.io/badge/Java-25-red)
 ![JavaFX](https://img.shields.io/badge/JavaFX-25-orange)
 ![Gradle](https://img.shields.io/badge/build-Gradle-02303A?logo=gradle&logoColor=white)
-![Jason](https://img.shields.io/badge/Jason-purple)
+![JSON](https://img.shields.io/badge/JSON-Data-000000?logo=json&logoColor=white)
 
 O **Invest&Multiply** é um gerenciador de carteira de investimentos pessoal desenvolvido em Java.
 
