@@ -73,7 +73,7 @@ public class Carteira implements Persistivel {
      * @param dinheiro valor a ser investido
      * @throws InvalidAssetException se o valor não for positivo ou o ativo não estiver cadastrado
      */
-    public void compra(String nome, int dinheiro) throws InvalidAssetException {
+    public void compra(String nome, float dinheiro) throws InvalidAssetException {
         if (dinheiro <= 0) {
             throw new InvalidAssetException("Valor de compra deve ser maior que zero.");
         }
@@ -137,13 +137,29 @@ public class Carteira implements Persistivel {
         return 0;
     }
 
-    public float vender(String nome, int quantidade) {
+    /**
+     * Vende unidades de um ativo já cadastrado na carteira.
+     *
+     * @param nome nome do ativo a vender
+     * @param quantidade quantidade de unidades a vender
+     * @return valor recebido pela venda
+     * @throws InvalidAssetException se a quantidade não for positiva, exceder a
+     *         posse atual ou o ativo não estiver cadastrado
+     */
+    public float vender(String nome, float quantidade) throws InvalidAssetException {
+        if (quantidade <= 0) {
+            throw new InvalidAssetException("Quantidade a vender deve ser maior que zero.");
+        }
         for (FinancialAsset ativo : investimentos) {
             if (ativo.getNome().equals(nome)) {
+                if (quantidade > ativo.getQuantidade()) {
+                    throw new InvalidAssetException(String.format(
+                            "Quantidade insuficiente: você possui %.2f unidades.", ativo.getQuantidade()));
+                }
                 return (float) ativo.vender(quantidade);
             }
         }
-        return 0;
+        throw new InvalidAssetException("Ativo não cadastrado: " + nome);
     }
 
     public void atualizarInformacoes() {
