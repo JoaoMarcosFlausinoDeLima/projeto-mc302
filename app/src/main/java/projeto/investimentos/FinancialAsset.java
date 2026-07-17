@@ -134,10 +134,16 @@ public abstract class FinancialAsset implements Calculavel {
     /**
      * Vende a quantidade informada de unidades do ativo.
      *
+     * <p>O valor investido é reduzido proporcionalmente à fração vendida, para que
+     * a variação monetária continue refletindo apenas a posição restante.</p>
+     *
      * @param quantidade quantidade de unidades a vender
      * @return valor recebido pela venda
      */
     public double vender(float quantidade){
+        if (this.quantidade > 0) {
+            investido -= investido * (quantidade / this.quantidade);
+        }
         this.quantidade -= quantidade;
         atualizarDinheiroTotal();
         return preco_atual*quantidade;

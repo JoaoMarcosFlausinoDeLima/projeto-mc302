@@ -16,7 +16,8 @@ public class Criptomoeda extends FinancialAsset {
             String link = "https://coinmarketcap.com/currencies/" + this.nome;
             Document doc = Jsoup.connect(link).get();
             Element preco = doc.selectFirst("span[data-test=text-cdp-price-display]");
-            this.preco_atual = Float.parseFloat(preco.text().replace("$", ""));
+            // preço vem no formato americano, ex.: "$63,143.59" — remove "$" e as vírgulas de milhar
+            this.preco_atual = Double.parseDouble(preco.text().replace("$", "").replace(",", ""));
             
          } catch (Exception e) {
             System.out.println("Erro ao atualizar informações da cripito: " + e.getMessage());

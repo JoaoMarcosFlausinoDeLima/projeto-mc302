@@ -30,11 +30,13 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -45,6 +47,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import projeto.excecoes.InvalidAssetException;
 import projeto.excecoes.PersistenceException;
@@ -114,16 +117,20 @@ public class TelaCarteira {
 
     private Tab criarAbaAtivos() {
         Button cadastrar = new Button("Cadastrar");
+        Button comprar = new Button("Comprar");
+        Button vender = new Button("Vender");
         Button editar = new Button("Editar");
         Button remover = new Button("Remover");
         Button atualizarPrecos = new Button("Atualizar preços");
         Button relGeral = new Button("Relatório geral");
         Button relTipo = new Button("Relatório por tipo");
-        Button recomendacoes = new Button("Recomendações");
+        Button alertas = new Button("Alertas");
         Button salvar = new Button("Salvar");
         Button sair = new Button("Sair");
 
         cadastrar.setOnAction(e -> abrirDialogoCadastro());
+        comprar.setOnAction(e -> abrirDialogoCompra());
+        vender.setOnAction(e -> abrirDialogoVenda());
         editar.setOnAction(e -> abrirDialogoEdicao());
         remover.setOnAction(e -> removerSelecionado());
         atualizarPrecos.setOnAction(e -> {
@@ -134,12 +141,12 @@ public class TelaCarteira {
                 mostrarTexto("Relatório geral", reportService.gerarRelatorioGeral(carteira).gerar()));
         relTipo.setOnAction(e ->
                 mostrarTexto("Relatório por tipo", reportService.gerarRelatorioPorTipo(carteira).gerar()));
-        recomendacoes.setOnAction(e -> mostrarTexto("Recomendações", gerarRecomendacoes()));
+        alertas.setOnAction(e -> mostrarTexto("Alertas", gerarRecomendacoes()));
         salvar.setOnAction(e -> salvar());
         sair.setOnAction(e -> app.mostrarLogin());
 
-        FlowPane barra = new FlowPane(8, 8, cadastrar, editar, remover, atualizarPrecos,
-                relGeral, relTipo, recomendacoes, salvar, sair);
+        FlowPane barra = new FlowPane(8, 8, cadastrar, comprar, vender, editar, remover,
+                atualizarPrecos, relGeral, relTipo, alertas, salvar, sair);
         barra.setPadding(new Insets(10));
 
         BorderPane conteudo = new BorderPane();
@@ -162,6 +169,9 @@ public class TelaCarteira {
         TableColumn<FinancialAsset, Number> colQtd = new TableColumn<>("Quantidade");
         colQtd.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getQuantidade()));
 
+        TableColumn<FinancialAsset, Number> colPreco = new TableColumn<>("Preço por cota");
+        colPreco.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPrecoAtual()));
+
         TableColumn<FinancialAsset, Number> colInvest = new TableColumn<>("Investido");
         colInvest.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getInvestido()));
 
@@ -171,14 +181,32 @@ public class TelaCarteira {
         TableColumn<FinancialAsset, Number> colVar = new TableColumn<>("Variação");
         colVar.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().calcularVariaçãoMonetaria()));
 
+        formatarDuasCasas(colQtd);
+        formatarDuasCasas(colPreco);
+        formatarDuasCasas(colInvest);
+        formatarDuasCasas(colAtual);
+        formatarDuasCasas(colVar);
+
         tabela.getColumns().add(colNome);
         tabela.getColumns().add(colTipo);
         tabela.getColumns().add(colQtd);
+        tabela.getColumns().add(colPreco);
         tabela.getColumns().add(colInvest);
         tabela.getColumns().add(colAtual);
         tabela.getColumns().add(colVar);
         tabela.setItems(dados);
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    /** Exibe os valores numéricos da coluna com duas casas decimais. */
+    private void formatarDuasCasas(TableColumn<FinancialAsset, Number> coluna) {
+        coluna.setCellFactory(tc -> new TableCell<FinancialAsset, Number>() {
+            @Override
+            protected void updateItem(Number valor, boolean vazio) {
+                super.updateItem(valor, vazio);
+                setText(vazio || valor == null ? null : String.format("%.2f", valor.doubleValue()));
+            }
+        });
     }
 
     // ------------------------------------------------------------------
@@ -239,6 +267,15 @@ public class TelaCarteira {
         tipo.getSelectionModel().selectFirst();
         TextField nome = new TextField();
         nome.setPromptText("Código (ex.: PETR4)");
+
+        Label infoNome = new Label("ⓘ");
+        infoNome.setStyle("-fx-font-size: 14px; -fx-text-fill: #9aa5ab; -fx-cursor: hand;");
+        Tooltip dicaNome = new Tooltip("Use o nome registrado no URL do site CoinMarketCap");
+        dicaNome.setShowDelay(Duration.millis(150));
+        Tooltip.install(infoNome, dicaNome);
+        HBox campoNome = new HBox(6, nome, infoNome);
+        campoNome.setAlignment(Pos.CENTER_LEFT);
+
         TextField valor = new TextField();
         valor.setPromptText("Valor investido");
 
@@ -247,7 +284,7 @@ public class TelaCarteira {
         grade.setVgap(10);
         grade.setPadding(new Insets(10));
         grade.addRow(0, new Label("Tipo:"), tipo);
-        grade.addRow(1, new Label("Nome:"), nome);
+        grade.addRow(1, new Label("Nome:"), campoNome);
         grade.addRow(2, new Label("Valor:"), valor);
 
         dialogo.getDialogPane().setContent(grade);
@@ -260,6 +297,83 @@ public class TelaCarteira {
                 atualizar();
             } catch (NumberFormatException ex) {
                 erro("Valor inválido: informe um número inteiro.");
+            } catch (InvalidAssetException ex) {
+                erro(ex.getMessage());
+            }
+        }
+    }
+
+    private void abrirDialogoCompra() {
+        FinancialAsset selecionado = tabela.getSelectionModel().getSelectedItem();
+        if (selecionado == null) {
+            erro("Selecione um ativo para comprar.");
+            return;
+        }
+
+        Dialog<ButtonType> dialogo = new Dialog<>();
+        dialogo.setTitle("Comprar " + selecionado.getNome());
+
+        Label preco = new Label(String.format("R$ %.2f", selecionado.getPrecoAtual()));
+        TextField valor = new TextField();
+        valor.setPromptText("Ex.: 500.00");
+
+        GridPane grade = new GridPane();
+        grade.setHgap(10);
+        grade.setVgap(10);
+        grade.setPadding(new Insets(10));
+        grade.addRow(0, new Label("Preço por cota:"), preco);
+        grade.addRow(1, new Label("Valor (R$):"), valor);
+
+        dialogo.getDialogPane().setContent(grade);
+        dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        if (dialogo.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                float dinheiro = Float.parseFloat(valor.getText().trim().replace(",", "."));
+                carteira.compra(selecionado.getNome(), dinheiro);
+                atualizar();
+            } catch (NumberFormatException ex) {
+                erro("Valor inválido: informe um número.");
+            } catch (InvalidAssetException ex) {
+                erro(ex.getMessage());
+            }
+        }
+    }
+
+    private void abrirDialogoVenda() {
+        FinancialAsset selecionado = tabela.getSelectionModel().getSelectedItem();
+        if (selecionado == null) {
+            erro("Selecione um ativo para vender.");
+            return;
+        }
+
+        Dialog<ButtonType> dialogo = new Dialog<>();
+        dialogo.setTitle("Vender " + selecionado.getNome());
+
+        Label possuida = new Label(String.format("%.2f", selecionado.getQuantidade()));
+        Label preco = new Label(String.format("R$ %.2f", selecionado.getPrecoAtual()));
+        TextField quantidade = new TextField();
+        quantidade.setPromptText("Ex.: 10");
+
+        GridPane grade = new GridPane();
+        grade.setHgap(10);
+        grade.setVgap(10);
+        grade.setPadding(new Insets(10));
+        grade.addRow(0, new Label("Quantidade possuída:"), possuida);
+        grade.addRow(1, new Label("Preço por cota:"), preco);
+        grade.addRow(2, new Label("Quantidade a vender:"), quantidade);
+
+        dialogo.getDialogPane().setContent(grade);
+        dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        if (dialogo.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                float qtd = Float.parseFloat(quantidade.getText().trim().replace(",", "."));
+                float recebido = carteira.vender(selecionado.getNome(), qtd);
+                atualizar();
+                info(String.format("Venda realizada: R$ %.2f", recebido));
+            } catch (NumberFormatException ex) {
+                erro("Quantidade inválida: informe um número.");
             } catch (InvalidAssetException ex) {
                 erro(ex.getMessage());
             }
