@@ -10,6 +10,7 @@ plugins {
     id 'application'
     // JavaFX para a interface gráfica desktop.
     id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'jacoco'
 }
 
 javafx {
@@ -49,13 +50,14 @@ dependencies {
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
 application {
     // Define the main class for the application (interface gráfica JavaFX).
     mainClass = 'projeto.gui.MainApp'
+    //mainClass = 'projeto.App'
 }
 
 tasks.named('test') {
@@ -71,5 +73,15 @@ tasks.named('test') {
     testLogging {
         events 'passed', 'failed', 'skipped'
         showStandardStreams = false
+    }
+
+    finalizedBy(tasks.named('jacocoTestReport'))
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn(tasks.named('test'))
+    reports {
+        xml.required = true
+        html.required = true
     }
 }

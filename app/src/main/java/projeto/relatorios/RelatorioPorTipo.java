@@ -6,6 +6,7 @@ import java.util.Map;
 
 import projeto.investimentos.FinancialAsset;
 import projeto.sistemas.Carteira;
+import projeto.excecoes.InvalidAssetException;
 
 /**
  * Relatório que agrupa os ativos da carteira por tipo (Ação, FII, Criptomoeda,
@@ -20,6 +21,12 @@ public class RelatorioPorTipo extends Report {
 
     @Override
     public String gerar() {
+        try{
+            carteira.atualizarInformacoes();
+        } catch (InvalidAssetException e) {
+            System.out.println("Erro ao atualizar informações: " + e.getMessage());
+        }
+
         // Agrupa os totais por tipo de ativo, preservando a ordem de aparição.
         Map<String, double[]> grupos = new LinkedHashMap<>();
         for (FinancialAsset ativo : carteira.getInvestimentos()) {

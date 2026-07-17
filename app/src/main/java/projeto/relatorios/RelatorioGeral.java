@@ -3,6 +3,7 @@ package projeto.relatorios;
 import java.util.Locale;
 
 import projeto.sistemas.Carteira;
+import projeto.excecoes.*;
 
 /**
  * Relatório com a visão geral da carteira: total investido, valor atual,
@@ -17,6 +18,11 @@ public class RelatorioGeral extends Report {
     @Override
     public String gerar() {
         StringBuilder sb = new StringBuilder();
+        try {
+            carteira.atualizarInformacoes();
+        } catch (InvalidAssetException e) {
+            System.out.println("Erro ao atualizar informações: " + e.getMessage());
+        }
         sb.append("===== RELATÓRIO GERAL DA CARTEIRA =====\n");
         sb.append("Data: ").append(dataGeracao).append("\n");
         sb.append(String.format(Locale.forLanguageTag("pt-BR"),

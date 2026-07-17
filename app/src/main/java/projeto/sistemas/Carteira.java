@@ -17,13 +17,10 @@ import projeto.investimentos.Açao;
 import projeto.investimentos.Criptomoeda;
 import projeto.investimentos.Fii;
 import projeto.investimentos.FinancialAsset;
+import projeto.investimentos.FundoDeInvestimento;
 import projeto.persistencia.GsonFactory;
 
-/**
- * Núcleo do sistema: armazena e gerencia os ativos financeiros da carteira.
- *
- * <p>Implementa {@link Persistivel} para salvar e carregar a carteira em JSON.</p>
- */
+
 public class Carteira implements Persistivel {
 
     private static final String ARQUIVO = "carteira.json";
@@ -52,12 +49,7 @@ public class Carteira implements Persistivel {
             case "Fii":
                 investimentos.add(new Fii(nome, dinheiro));
                 break;
-            case "FundoDeInvestimento":
-                investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro));
-                break;
-            case "TituloRendaFixa":
-                investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro));
-                break;
+            
             case "Criptomoeda":
                 investimentos.add(new Criptomoeda(nome, dinheiro));
                 break;
@@ -67,7 +59,54 @@ public class Carteira implements Persistivel {
     }
 
     /**
-     * Compra mais unidades de um ativo já cadastrado na carteira.
+     * Cadastra um título de renda fixa na carteira.
+     *
+     * @param nome nome do ativo
+     * @param dinheiro valor investido
+     * @param tipo tipo de título (pré-fixado, pós-fixado, misto)
+     * @param indice índice de correção (por exemplo IPCA)
+     * @param taxa taxa contratada do título
+     * @param data_de_compra data de compra em vetor [dia, mês, ano]
+     * @param data_de_vencimento data de vencimento em vetor [dia, mês, ano]
+     * @param ultima_atu última atualização da cotação em vetor [dia, mês, ano]
+     * @throws InvalidAssetException se os dados do título forem inválidos
+     */
+    public void cadastra_titulo(String nome, float dinheiro,String tipo,String indice,float taxa,int data_de_compra[],int data_de_vencimento[],int ultima_atu[]) throws InvalidAssetException{
+        investimentos.add(new projeto.investimentos.TituloRendaFixa(nome, dinheiro, tipo, indice, taxa, data_de_compra,  data_de_vencimento, ultima_atu));
+    }
+
+    /**
+     * Cadastra um fundo de investimento na carteira.
+     *
+     * @param nome nome do fundo
+     * @param dinheiro valor investido
+     * @param taxa_administracao taxa administrativa do fundo
+     * @param taxa_performance taxa de performance do fundo
+     * @param tipo categoria do fundo
+     * @param benchmark índice de referência do fundo
+     * @param cotacao valor atual da cota
+     * @param quantidade_de_cotas número de cotas adquiridas
+     * @throws InvalidAssetException se os dados do fundo forem inválidos
+     */
+    public void cadastra_fundo(String nome, float dinheiro,float taxa_administracao,float taxa_performance,String tipo,String benchmark,float cotacao,int quantidade_de_cotas) throws InvalidAssetException{
+        investimentos.add(new projeto.investimentos.FundoDeInvestimento(nome, dinheiro, taxa_administracao, taxa_performance, tipo, benchmark, cotacao, quantidade_de_cotas));
+    }
+
+
+     /**
+     * atualiza manualmente os novos valores do fundo de investimento
+     *
+     */
+    public void editar_fundo(String nome, float cotacao, int quantidade) throws InvalidAssetException {
+        for(FinancialAsset ativo: investimentos){
+            if(ativo.getNome().equals(nome) && ativo instanceof FundoDeInvestimento){
+                ((FundoDeInvestimento) ativo).editar(cotacao, (float) quantidade);
+            }
+        }
+    }
+   
+
+    /**
      *
      * @param nome nome do ativo a comprar
      * @param dinheiro valor a ser investido
@@ -86,8 +125,9 @@ public class Carteira implements Persistivel {
         throw new InvalidAssetException("Ativo não cadastrado: " + nome);
     }
 
-    /**
-     * Edita um ativo já cadastrado, redefinindo quantidade e valor investido.
+  
+
+    /** 
      *
      * @param nome nome do ativo a editar
      * @param novaQuantidade nova quantidade de unidades
@@ -110,6 +150,11 @@ public class Carteira implements Persistivel {
         throw new InvalidAssetException("Ativo não cadastrado: " + nome);
     }
 
+    /**
+     * Remove um ativo da carteira pelo nome.
+     *
+     * @param nome nome do ativo a remover
+     */
     public void remove(String nome) {
         for (int i = 0; i < investimentos.size(); i++) {
             if (investimentos.get(i).getNome().equals(nome)) {
@@ -119,6 +164,11 @@ public class Carteira implements Persistivel {
         }
     }
 
+    /**
+     * Exibe um resumo detalhado de um ativo específico da carteira.
+     *
+     * @param nome nome do ativo a ser resumido
+     */
     public void resumo(String nome) {
         for (FinancialAsset ativo : investimentos) {
             if (ativo.getNome().equals(nome)) {
@@ -128,6 +178,12 @@ public class Carteira implements Persistivel {
         }
     }
 
+    /**
+     * Retorna a variação monetária de um ativo específico.
+     *
+     * @param nome nome do ativo
+     * @return diferença entre o valor atual e o valor investido
+     */
     public double variacao(String nome) {
         for (FinancialAsset ativo : investimentos) {
             if (ativo.getNome().equals(nome)) {
@@ -162,12 +218,22 @@ public class Carteira implements Persistivel {
         throw new InvalidAssetException("Ativo não cadastrado: " + nome);
     }
 
-    public void atualizarInformacoes() {
+    /**
+     * Atualiza informações externas de todos os ativos da carteira.
+     *
+     * @throws InvalidAssetException se algum ativo não puder ser atualizado
+     */
+    public void atualizarInformacoes() throws InvalidAssetException {
         for (FinancialAsset ativo : investimentos) {
             ativo.atualizarInformacoes();
         }
     }
 
+    /**
+     * Atualiza o valor renderizado de cada ativo e retorna a soma do rendimento.
+     *
+     * @return soma dos resultados de render() dos ativos da carteira
+     */
     public float render() {
         float total = 0;
         for (FinancialAsset ativo : investimentos) {
@@ -176,6 +242,12 @@ public class Carteira implements Persistivel {
         return total;
     }
 
+    /**
+     * Retorna o preço atual de um ativo pelo nome.
+     *
+     * @param nome nome do ativo
+     * @return preço atual do ativo, ou 0 se não encontrado
+     */
     public float getPrecoAtivo(String nome) {
         for (FinancialAsset ativo : investimentos) {
             if (ativo.getNome().equals(nome)) {
@@ -185,6 +257,11 @@ public class Carteira implements Persistivel {
         return 0;
     }
 
+    /**
+     * Retorna a lista de investimentos atualmente cadastrados.
+     *
+     * @return lista de ativos da carteira
+     */
     public List<FinancialAsset> getInvestimentos() {
         return investimentos;
     }
@@ -281,4 +358,12 @@ public class Carteira implements Persistivel {
             throw new PersistenceException("Falha ao carregar carteira: " + e.getMessage(), e);
         }
     }
+
+    public void resumos(){
+        for(projeto.investimentos.FinancialAsset ativo: investimentos){
+            ativo.resumo();
+            System.out.println();
+        }
+    }
+
 }

@@ -3,24 +3,43 @@ package projeto.investimentos;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import projeto.excecoes.*;
 
+/**
+ * Representa uma criptomoeda como um ativo financeiro na carteira.
+ *
+ * <p>Atualiza o preço através de scraping da página da moeda no CoinMarketCap
+ * e calcula a variação de valor com base na cotação atual.</p>
+ */
 public class Criptomoeda extends FinancialAsset {
-    public Criptomoeda(String nome, float dinheiro){
+    public Criptomoeda(String nome, float dinheiro) throws InvalidAssetException{
         super(nome, dinheiro);
         tipo = 2;
     }
 
-    public void atualizarInformacoes(){
+    public void atualizarInformacoes() throws InvalidAssetException{
         try{
             String link = "https://coinmarketcap.com/currencies/" + this.nome;
-            Document doc = Jsoup.connect(link).get();
+        
+        
+            Document doc = Jsoup.connect(link)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                    .header("Accept-Language", "en-US,en;q=0.9")
+                    .timeout(10000) 
+                    .get();
+                    
             Element preco = doc.selectFirst("span[data-test=text-cdp-price-display]");
-            // preço vem no formato americano, ex.: "$63,143.59" — remove "$" e as vírgulas de milhar
-            this.preco_atual = Double.parseDouble(preco.text().replace("$", "").replace(",", ""));
-            
-         } catch (Exception e) {
-            System.out.println("Erro ao atualizar informações da cripito: " + e.getMessage());
+
+            if (preco != null) {
+              String precoLimpo = preco.text().replace("$", "").replace(",", "").trim();
+                this.preco_atual = Float.parseFloat(precoLimpo);
+            } else {
+                this.preco_atual = 0;
+                System.out.println("Elemento de preço não encontrado no HTML retornado para: " + this.nome);
+            }
+            this.atualizarDinheiroTotal();
+        } catch (Exception e) {
+            throw new InvalidAssetException("Cripito invesistente no site coinmarketcap");
         }
     }
 

@@ -1,11 +1,9 @@
 package projeto.investimentos;
 
+import projeto.excecoes.InvalidAssetException;
 import projeto.interfaces.Calculavel;
-import java.util.Calendar;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import projeto.excecoes.InvalidAssetException;;
+
 
 /**
  * Classe base para ativos financeiros que guarda informações comuns a todos os investimentos.
@@ -58,9 +56,12 @@ public abstract class FinancialAsset implements Calculavel {
      * @param nome nome ou código do ativo
      * @param dinheiro valor investido inicialmente no ativo
      */
-    public FinancialAsset(String nome,Float dinheiro){
+    public FinancialAsset(String nome,Float dinheiro) throws InvalidAssetException{
         this.nome = nome;
+        this.investido = 0;
+        this.dinheiro_total = 0;
         atualizarInformacoes();
+        
         comprar(dinheiro);
 
     }
@@ -107,13 +108,13 @@ public abstract class FinancialAsset implements Calculavel {
      * @return valor atual da posição em reais
      */
     public double getValorAtual(){
-        return preco_atual * quantidade;
+        return dinheiro_total;
     }
 
     /**
      * Atualiza o valor total do ativo com base na quantidade e no preço atual.
      */
-    private void atualizarDinheiroTotal(){
+    protected void atualizarDinheiroTotal(){
         this.dinheiro_total = quantidade*preco_atual;
     }
 
@@ -124,12 +125,43 @@ public abstract class FinancialAsset implements Calculavel {
      *
      * @param dinheiro valor em reais utilizado para a compra
      */
-    public void comprar(float dinheiro){
+    public void comprar(float dinheiro) throws InvalidAssetException{
+        if (preco_atual <= 0.0){
+            
+            throw new InvalidAssetException("Preço do ativo menor doque 0: %f".formatted(preco_atual));
+  
+     
+        }
         quantidade += dinheiro/preco_atual;
         investido += dinheiro;
         atualizarDinheiroTotal();
+
     }
 
+    public void setPrecoAtual(double novoPreco) throws InvalidAssetException {
+        if(novoPreco <= 0){
+            throw new InvalidAssetException("Preço do ativo não pode ser menor ou igual a zero.");
+        }
+
+        this.preco_atual = novoPreco;
+        atualizarDinheiroTotal();
+    }
+
+    public void setQuantidade(float novaQuantidade) throws InvalidAssetException {
+        if(novaQuantidade < 0){
+            throw new InvalidAssetException("Quantidade do ativo não pode ser negativa.");
+        }
+        this.quantidade = novaQuantidade;
+        atualizarDinheiroTotal();
+    }
+
+    public void setInvestido(float novoInvestido) throws InvalidAssetException {
+        if(novoInvestido < 0){
+           throw new InvalidAssetException("Valor investido não pode ser negativo.");
+        }
+        this.investido = novoInvestido;
+        atualizarDinheiroTotal();
+    }
 
     /**
      * Vende a quantidade informada de unidades do ativo.
@@ -140,7 +172,10 @@ public abstract class FinancialAsset implements Calculavel {
      * @param quantidade quantidade de unidades a vender
      * @return valor recebido pela venda
      */
-    public double vender(float quantidade){
+    public double vender(float quantidade) throws InvalidAssetException {
+        if(quantidade > this.quantidade){
+            throw new InvalidAssetException("Quantidade a vender maior do que a quantidade disponível.");
+        }
         if (this.quantidade > 0) {
             investido -= investido * (quantidade / this.quantidade);
         }
@@ -155,7 +190,10 @@ public abstract class FinancialAsset implements Calculavel {
      * @param novaQuantidade nova quantidade de unidades
      * @param novoInvestido novo valor investido em reais
      */
-    public void editar(float novaQuantidade, float novoInvestido){
+    public void editar(float novaQuantidade, float novoInvestido) throws InvalidAssetException {
+        if(novaQuantidade < 0 || novoInvestido < 0){
+            throw new InvalidAssetException("Quantidade e valor investido não podem ser negativos.");
+        }
         this.quantidade = novaQuantidade;
         this.investido = novoInvestido;
         atualizarDinheiroTotal();
@@ -168,7 +206,7 @@ public abstract class FinancialAsset implements Calculavel {
      */
     @Override
     public double calcularVariaçãoMonetaria(){
-        return (preco_atual*quantidade - investido);
+        return (dinheiro_total - investido);
     }
 
     /**
@@ -196,7 +234,7 @@ public abstract class FinancialAsset implements Calculavel {
     /**
      * Atualiza os dados específicos do ativo a partir de uma fonte externa.
      */
-    public abstract void atualizarInformacoes();
+    public abstract void atualizarInformacoes() throws InvalidAssetException;
         
     public abstract void resumo();
 

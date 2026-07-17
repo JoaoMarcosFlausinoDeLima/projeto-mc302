@@ -1,11 +1,12 @@
 package projeto.investimentos;
 
 
-import java.util.Calendar;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import projeto.excecoes.InvalidAssetException;
 
 /**
  * Representa uma ação de bolsa como um ativo financeiro.
@@ -64,8 +65,9 @@ public class Açao extends FinancialAsset{
      * @param nome código da ação (ticker)
      * @param dinheiro valor investido inicialmente
      */
-    public Açao(String nome,float dinheiro){
+    public Açao(String nome,float dinheiro) throws InvalidAssetException{
         super(nome, dinheiro);
+        
         tipo = 0;
         
     }
@@ -76,12 +78,16 @@ public class Açao extends FinancialAsset{
      * <p>Busca dados como cotação, empresa, dividend yield, P/L, valor de mercado,
      * mínimas e máximas de 52 semanas e número de ações.</p>
      */
-    public void atualizarInformacoes(){
+    public void atualizarInformacoes() throws InvalidAssetException{
         try {
             String url = "https://www.fundamentus.com.br/detalhes.php?papel= ".replace(" ", this.nome);
             Document doc = Jsoup.connect(url).get();
             
             Elements labels = doc.select("td.label");
+
+            if(labels.isEmpty()){
+                throw new InvalidAssetException("Ação inexistente no site Fundamentus");
+            }
 
             for(Element labelCol : labels){
                 
@@ -120,7 +126,8 @@ public class Açao extends FinancialAsset{
             }
 
         } catch (Exception e) {
-            System.out.println("Erro ao atualizar informações da ação: " + e.getMessage());
+            throw new InvalidAssetException("Ação inesistente no site fundamentos");
+        
         }
     }
 

@@ -115,7 +115,7 @@ public class TelaCarteira {
     // Aba de ativos
     // ------------------------------------------------------------------
 
-    private Tab criarAbaAtivos() {
+    private Tab criarAbaAtivos(){
         Button cadastrar = new Button("Cadastrar");
         Button comprar = new Button("Comprar");
         Button vender = new Button("Vender");
@@ -134,9 +134,14 @@ public class TelaCarteira {
         editar.setOnAction(e -> abrirDialogoEdicao());
         remover.setOnAction(e -> removerSelecionado());
         atualizarPrecos.setOnAction(e -> {
-            carteira.atualizarInformacoes();
-            atualizar();
+            try {
+                carteira.atualizarInformacoes();
+                atualizar();
+            } catch (InvalidAssetException ex) {
+                System.out.println("Erro ao atualizar informações: " + ex.getMessage());
+            }
         });
+        
         relGeral.setOnAction(e ->
                 mostrarTexto("Relatório geral", reportService.gerarRelatorioGeral(carteira).gerar()));
         relTipo.setOnAction(e ->
@@ -264,8 +269,11 @@ public class TelaCarteira {
 
         ChoiceBox<String> tipo = new ChoiceBox<>(FXCollections.observableArrayList(
                 "Ação", "Fii", "Criptomoeda", "FundoDeInvestimento", "TituloRendaFixa"));
-        tipo.getSelectionModel().selectFirst();
+                tipo.getSelectionModel().selectFirst();
+        
+        
         TextField nome = new TextField();
+        
         nome.setPromptText("Código (ex.: PETR4)");
 
         Label infoNome = new Label("ⓘ");
@@ -286,7 +294,7 @@ public class TelaCarteira {
         grade.addRow(0, new Label("Tipo:"), tipo);
         grade.addRow(1, new Label("Nome:"), campoNome);
         grade.addRow(2, new Label("Valor:"), valor);
-
+        
         dialogo.getDialogPane().setContent(grade);
         dialogo.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -449,14 +457,14 @@ public class TelaCarteira {
             return "Nenhum ativo cadastrado.";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("(Alertas demonstrativos, sem caráter de recomendação financeira)\n\n");
+        sb.append("(Alertas demonstrativos)\n\n");
         for (FinancialAsset ativo : carteira.getInvestimentos()) {
             double variacao = ativo.calcularVariaçãoMonetaria();
             String situacao;
             if (variacao > 0) {
-                situacao = "em alta";
+                situacao = "subindo";
             } else if (variacao < 0) {
-                situacao = "em baixa";
+                situacao = "caindo";
             } else {
                 situacao = "estável";
             }
