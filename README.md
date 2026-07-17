@@ -13,10 +13,8 @@ O **Invest&Multiply** é um gerenciador de carteira de investimentos pessoal des
 
 ## 📸 Demonstração da Interface
 
-> ADICIONAR ALGUMAS CAPTURAS DE TELAS
-
 <p align="center">
-  <img src="assets/login.png" alt="Tela de Login do Invest&Multiply" width="500">
+  <img src="assets/login.png" alt="Tela de Login do Invest&Multiply" width="300">
 </p>
 
 ---
