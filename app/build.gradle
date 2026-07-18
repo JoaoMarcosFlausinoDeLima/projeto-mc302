@@ -63,6 +63,18 @@ application {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+
+    // Isola os arquivos criados pelos testes (data/, carteira.json)
+    // para não misturar com os dados reais do app.
+    workingDir = layout.buildDirectory.dir('test-work').get().asFile
+    doFirst { workingDir.mkdirs() }
+
+    // Testes de GUI abrem janelas: mostra o andamento no terminal.
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        showStandardStreams = false
+    }
+
     finalizedBy(tasks.named('jacocoTestReport'))
 }
 

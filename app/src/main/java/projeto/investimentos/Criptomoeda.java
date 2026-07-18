@@ -29,7 +29,7 @@ public class Criptomoeda extends FinancialAsset {
                     .get();
                     
             Element preco = doc.selectFirst("span[data-test=text-cdp-price-display]");
-            
+
             if (preco != null) {
               String precoLimpo = preco.text().replace("$", "").replace(",", "").trim();
                 this.preco_atual = Float.parseFloat(precoLimpo);

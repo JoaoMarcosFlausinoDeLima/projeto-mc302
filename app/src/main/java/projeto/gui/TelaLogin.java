@@ -26,6 +26,8 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+import java.util.prefs.Preferences;
+
 import projeto.excecoes.PersistenceException;
 import projeto.servicos.UserController;
 
@@ -50,6 +52,9 @@ public class TelaLogin {
             "-fx-background-color: transparent; -fx-text-fill: " + COR_TEXTO + ";"
             + " -fx-border-color: " + COR_BORDA + "; -fx-border-radius: 24; -fx-background-radius: 24;"
             + " -fx-cursor: hand;";
+
+    /** Chave da preferência que guarda o usuário marcado com "Lembrar-me". */
+    private static final String PREF_USUARIO = "usuario_lembrado";
 
     private final MainApp app;
     private final UserController userController;
@@ -85,6 +90,14 @@ public class TelaLogin {
 
         CheckBox lembrar = new CheckBox("Lembrar-me");
         lembrar.setStyle("-fx-text-fill: " + COR_TEXTO + ";");
+
+        // Preenche o usuário salvo na última vez em que "Lembrar-me" ficou marcado.
+        Preferences prefs = Preferences.userNodeForPackage(TelaLogin.class);
+        String usuarioLembrado = prefs.get(PREF_USUARIO, "");
+        if (!usuarioLembrado.isBlank()) {
+            campoNome.setText(usuarioLembrado);
+            lembrar.setSelected(true);
+        }
         Hyperlink esqueceu = new Hyperlink("Esqueceu a senha?");
         esqueceu.setStyle("-fx-text-fill: #9fb8c6; -fx-font-style: italic; -fx-border-color: transparent;");
         esqueceu.setOnAction(e -> info("Recuperação de senha ainda não disponível."));
@@ -115,6 +128,7 @@ public class TelaLogin {
             }
             try {
                 if (userController.realizarLogin(campoNome.getText(), campoSenha.getText())) {
+                    salvarUsuarioLembrado(prefs, lembrar, campoNome.getText());
                     app.mostrarCarteira();
                 } else {
                     mensagem.setText("Usuário ou senha inválidos.");
@@ -130,6 +144,7 @@ public class TelaLogin {
             }
             try {
                 userController.cadastrarUsuario(campoNome.getText(), campoSenha.getText());
+                salvarUsuarioLembrado(prefs, lembrar, campoNome.getText());
                 app.mostrarCarteira();
             } catch (PersistenceException ex) {
                 mensagem.setText(ex.getMessage());
@@ -198,6 +213,15 @@ public class TelaLogin {
         p.setPrefSize(18, 20);
         p.setMaxSize(18, 20);
         return p;
+    }
+
+    /** Salva ou limpa o usuário lembrado conforme o estado do checkbox "Lembrar-me". */
+    private void salvarUsuarioLembrado(Preferences prefs, CheckBox lembrar, String usuario) {
+        if (lembrar.isSelected()) {
+            prefs.put(PREF_USUARIO, usuario);
+        } else {
+            prefs.remove(PREF_USUARIO);
+        }
     }
 
     private boolean camposVazios(TextField nome, PasswordField senha, Label mensagem) {
